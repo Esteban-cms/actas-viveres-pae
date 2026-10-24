@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Actas de víveres PAE</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="data.js"></script>
+<style>
+body{font:14px Arial,sans-serif;margin:0;background:#f4f6f8;color:#222}
+header{background:#1b5e20;color:#fff;padding:10px 16px}header h1{margin:0;font-size:18px}
+nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px 16px;background:#e0e6e0}
+nav button{padding:7px 14px;border:0;border-radius:4px;background:#fff;cursor:pointer}nav button.on{background:#1b5e20;color:#fff}
+main{padding:12px 16px}section{display:none;background:#fff;padding:12px;border-radius:6px;overflow-x:auto}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+label{display:flex;flex-direction:column;font-size:12px;color:#555;gap:2px}
+input{padding:5px;border:1px solid #bbb;border-radius:3px;font:13px Arial;box-sizing:border-box;width:100%}
+table{border-collapse:collapse}td,th{border:1px solid #ddd;padding:2px;font-size:12px}th{background:#eee}
+td input{border:0;min-width:70px}td:first-child input{min-width:230px}
+.chip{display:inline-block;background:#eef3ee;border:1px solid #bcd;border-radius:14px;padding:4px 10px;margin:3px}
+.chip input{width:52px;display:inline}.chip input[type=checkbox]{width:auto}
+b.x,.chip b{cursor:pointer;color:#c00;padding:0 6px}
+.p{background:#1b5e20;color:#fff;border:0;border-radius:4px;padding:9px 16px;margin:4px 6px 4px 0;cursor:pointer;font-size:14px}
+.s{padding:7px 12px;margin:3px;cursor:pointer}.n{color:#666;font-size:12px}
+#gr td input{width:46px;min-width:0;text-align:right}#gr td:first-child{position:sticky;left:0;background:#fff;white-space:nowrap}
+</style></head><body>
+<header><h1>Aplicativo de Actas de Víveres – PAE</h1></header>
+<nav id="nav"></nav>
+<main>
+<section id="t-ent"></section><section id="t-sed"></section><section id="t-pro"></section><section id="t-gr"></section>
+<section id="t-gen"></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let S=JSON.parse(localStorage.getItem('pae')||'null')||JSON.parse(JSON.stringify(DEF));
+const save=()=>{try{localStorage.setItem('pae',JSON.stringify(S))}catch(e){}};
+function set(p,v,num){const k=p.split('.');let o=S;for(let i=0;i<k.length-1;i++)o=o[k[i]];o[k[k.length-1]]=num?(parseFloat(v)||0):v;save()}
+const esc=s=>String(s==null?'':s).replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const inp=(p,v,t)=>`<input type="${t||'text'}" ${t=='number'?'step="any"':''} value="${esc(v)}" oninput="set('${p}',this.value,${t=='number'})">`;
+const fd=s=>s?s.split('-').reverse().join('/'):'';
+/* ---- cálculo ---- */
+const gpc=p=>S.menus.filter(m=>m.on).reduce((a,m)=>a+(+p.g[m.m-1]||0),0);
+const raw=(p,s)=>gpc(p)*s.c/(p.e||1);
+const qty=(p,s)=>Math.ceil(raw(p,s)-1e-9);
+const act=()=>S.sedes.filter(s=>s.c>0);
+const fq=(p,q)=>p.e==1?(q/1000).toFixed(2)+' kg':String(q);
+const ndias=()=>S.menus.filter(m=>m.on).length;
+function provider(){const C=S.prods.filter(p=>p.d),A=act();return{C,rows:A.map(s=>[s.n,s.c,...C.map(p=>qty(p,s))]),tot:C.map(p=>A.reduce((a,s)=>a+qty(p,s),0)),cup:A.reduce((a,s)=>a+s.c,0)}}
+/* ---- pantallas ---- */
+const F=[['num','N° de entrega','number'],['oper','Operador / proveedor'],['ccOper','C.C. de quien entrega'],['recibe','Recibe (municipio)'],['ccRec','C.C. de quien recibe'],['mun','Municipio'],['sub','Subregión'],['lugar','Lugar de entrega'],['hora','Hora de entrega','time'],['veh','Vehículo / Marca'],['placa','Placa'],['fecha','Fecha de entrega','date'],['desde','Consumo desde','date'],['hasta','Consumo hasta','date'],['cA','Ciclo de menú A','number'],['cB','Ciclo de menú B','number']];
+function rEnt(){$('t-ent').innerHTML='<div class=g>'+F.map(([k,l,t])=>`<label>${l}${inp('ent.'+k,S.ent[k],t)}</label>`).join('')+'</div><h3>Días de entrega</h3><p class=n>Desmarca los días sin clase: no se entregan. Cada día usa los gramos del número de menú que indiques (1 a 20).</p><div id=dias></div><button class=s onclick="S.menus.push({m:1,on:true});save();rDias()">+ Agregar día</button>';rDias()}
+function rDias(){$('dias').innerHTML=S.menus.map((m,i)=>`<span class=chip>Día ${i+1} <input type=checkbox ${m.on?'checked':''} onchange="set('menus.${i}.on',this.checked);cnt()"> menú <input type=number min=1 max=20 value=${m.m} oninput="set('menus.${i}.m',this.value,1)"><b onclick="S.menus.splice(${i},1);save();rDias()">×</b></span>`).join('')+'<p id=cnt></p>';cnt()}
+const cnt=()=>$('cnt').textContent='Días a entregar: '+ndias();
+function del(a,i){S[a].splice(i,1);save();rSedes();rProds();rGr()}
+function rSedes(){$('t-sed').innerHTML='<table><tr><th>Sede educativa<th>Código DANE<th>Cupos<th></tr>'+S.sedes.map((s,i)=>`<tr><td>${inp(`sedes.${i}.n`,s.n)}<td>${inp(`sedes.${i}.dane`,s.dane)}<td>${inp(`sedes.${i}.c`,s.c,'number')}<td><b class=x onclick="del('sedes',${i})">×</b>`).join('')+'</table><button class=s onclick="S.sedes.push({n:\'\',c:0,dane:\'\'});save();rSedes()">+ Agregar sede</button><p class=n>Las sedes con 0 cupos no generan acta.</p>'}
+function rProds(){$('t-pro').innerHTML='<p class=n>Unidad: texto que sale en el acta (ej. Bolsa/500gr). Gramos por empaque: lo que pesa cada unidad (1 si se entrega a granel en gramos). ★ = aparece en la lista del proveedor.</p><table><tr><th>Producto<th>Unidad / empaque<th>Gramos por empaque<th>★ Lista proveedor<th></tr>'+S.prods.map((p,i)=>`<tr><td>${inp(`prods.${i}.n`,p.n)}<td>${inp(`prods.${i}.u`,p.u)}<td>${inp(`prods.${i}.e`,p.e,'number')}<td style="text-align:center"><input type=checkbox style="width:auto" ${p.d?'checked':''} onchange="set('prods.${i}.d',this.checked)"><td><b class=x onclick="del('prods',${i})">×</b>`).join('')+'</table><button class=s onclick="S.prods.push({n:\'NUEVO PRODUCTO\',u:\'gr\',e:1,g:Array(20).fill(0),d:false});save();rProds();rGr()">+ Agregar producto</button>'}
+function rGr(){$('t-gr').innerHTML='<p class=n>Gramos (o unidades) por cupo para cada menú.</p><table id=gr><tr><th>Producto'+Array.from({length:20},(_,j)=>`<th>M${j+1}`).join('')+'</tr>'+S.prods.map((p,i)=>`<tr><td>${esc(p.n)}`+Array.from({length:20},(_,j)=>`<td><input type=number step=any value="${p.g[j]||0}" oninput="set('prods.${i}.g.${j}',this.value,1)">`).join('')).join('')+'</table>'}
+function rGen(){const P=provider();$('t-gen').innerHTML=`<p><b>${act().length}</b> sedes con cupos · <b>${P.cup}</b> cupos · <b>${ndias()}</b> días de entrega</p>
+<button class=p onclick="pdfAll()">Descargar PDF con todas las actas</button><button class=p onclick="zipAll()">Descargar ZIP (un PDF por sede)</button><button class=p onclick="dl(provPdf().output('blob'),'Lista_proveedor.pdf')">Lista del proveedor (PDF)</button> <span id=msg class=n></span>
+<h3>Lista del proveedor</h3><table><tr><th>Sede<th>Cupos`+P.C.map(p=>`<th>${esc(p.n)}`).join('')+'</tr>'+P.rows.map(r=>'<tr>'+r.map((v,i)=>`<td>${i>1?fq(P.C[i-2],v):esc(v)}`).join('')).join('')+`<tr><th>TOTAL<th>${P.cup}`+P.tot.map((v,i)=>`<th>${fq(P.C[i],v)}`).join('')+`</tr></table><hr><button class=s onclick="expo()">Guardar configuración (.json)</button><label class=s style="display:inline">Cargar configuración <input type=file accept=.json onchange="impo(this.files[0])" style="width:auto"></label><button class=s onclick="reset()">Restaurar datos originales</button>`}
+const T=[['ent','1. Entrega'],['sed','2. Sedes y cupos'],['pro','3. Productos y empaques'],['gr','4. Gramajes por menú'],['gen','5. Generar']];
+function tab(k){T.forEach(([t])=>{$('t-'+t).style.display=t==k?'block':'none'});[...$('nav').children].forEach((b,i)=>b.className=T[i][0]==k?'on':'');if(k=='gen')rGen()}
+function init(){$('nav').innerHTML=T.map(([k,l])=>`<button onclick="tab('${k}')">${l}</button>`).join('');rEnt();rSedes();rProds();rGr();tab('ent')}
+const expo=()=>dl(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),'config_pae.json');
+function impo(f){const r=new FileReader();r.onload=()=>{S=JSON.parse(r.result);save();init()};r.readAsText(f)}
+function reset(){if(confirm('¿Restaurar los datos originales?')){S=JSON.parse(JSON.stringify(DEF));save();init()}}
+const dl=(b,n)=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5e3)};
+/* ---- PDF (carta) ---- */
+const IM={};const loadImgs=Promise.all(Object.keys(LOGOS).map(k=>new Promise(r=>{const i=new Image();i.onload=()=>{IM[k]=i;r()};i.src=LOGOS[k]})));
+const nd=()=>new jspdf.jsPDF({unit:'mm',format:'letter'});
+function ph(d,t1,t2){let x=10;['men','gob','esc'].forEach(k=>{const w=11*IM[k].width/IM[k].height;d.addImage(LOGOS[k],'PNG',x,8,w,11);x+=w+4});
+const w=13*IM.pae.width/IM.pae.height;d.addImage(LOGOS.pae,'PNG',205.9-w,7,w,13);
+d.setDrawColor(0).setLineWidth(.4).line(10,22,205.9,22);d.setFont('helvetica','bold').setFontSize(11).text(t1,107.95,27,{align:'center'});d.setFontSize(8).text(t2,107.95,31.5,{align:'center',maxWidth:195});return 35}
+function table(d,y,w,head,rows,o){const h=o.h||4.4,al=o.al||[];
+const dr=(r,b,f)=>{let x=10;r.forEach((t,i)=>{if(f)d.setFillColor(225).rect(x,y,w[i],h,'FD');else d.rect(x,y,w[i],h);const a=al[i]||'l';d.setFont('helvetica',b||(o.lab||[]).includes(i)?'bold':'normal').setFontSize(o.fs||7.5).text(String(t),a=='r'?x+w[i]-1.2:x+1.2,y+h-1.3,{align:a=='r'?'right':'left',maxWidth:w[i]-2});x+=w[i]});y+=h};
+if(head)dr(head,1,1);rows.forEach((r,i)=>{if(y>268){d.addPage();y=o.pg();if(head)dr(head,1,1)}dr(r,o.bl&&i==rows.length-1,0)});return y}
+function bar(d,y,t){d.setFillColor(200,225,200).rect(10,y,195.9,5,'FD').setFont('helvetica','bold').setFontSize(8).text(t,107.95,y+3.6,{align:'center'});return y+5}
+function acta(d,s){const E=S.ent,pg=()=>ph(d,'ACTA DE ENTREGA DE VÍVERES','PROGRAMA DE ALIMENTACIÓN ESCOLAR – MUNICIPIO DE '+String(E.mun).toUpperCase()+' · '+s.n);let y=pg();
+const W=[34,64,32,65.9],R=[['Operador / proveedor',E.oper,'N° de entrega',E.num],['Municipio',E.mun,'Subregión',E.sub],['Establecimiento educativo',s.n,'Código DANE',s.dane],['Lugar de entrega',E.lugar,'Vehículo / Placa',E.veh+' / '+E.placa],['Fecha de entrega',fd(E.fecha),'Hora de entrega',E.hora],['Fechas de consumo','Del '+fd(E.desde)+' al '+fd(E.hasta),'Raciones (cupos) por día',s.c],['Ciclos de menú',E.cA+' y '+E.cB,'Días de consumo',ndias()]];
+y=bar(d,y,'DATOS GENERALES DE LA ENTREGA');y=table(d,y,W,null,R,{lab:[0,2],h:5.2,pg});
+y=bar(d,y+2,'RELACIÓN DE VÍVERES CON UNIDAD DE MEDIDA Y CANTIDAD A ENTREGAR');
+const rows=S.prods.map(p=>[p,raw(p,s)]).filter(a=>a[1]>0).map(([p,r])=>[p.n,p.u,+gpc(p).toFixed(2),+r.toFixed(3),Math.ceil(r-1e-9)]);
+y=table(d,y,[70,38,26,30,31.9],['Producto','Medida o empaque','Gr x cupo','Cant. sin redondear','Cant. a entregar'],rows,{al:['l','l','r','r','r'],pg});
+if(y>165){d.addPage();y=pg()}
+y=bar(d,y+3,'CERTIFICACIÓN DE RECIBIDO');
+y=table(d,y,[195.9],null,[['Criterio de calidad:   Excelente (4)      Buena (3)      Regular (2)      Mala (1)          Calificación: ______']],{h:6,pg});
+y=table(d,y,[195.9],null,[['Recibí cantidad conforme:   1. SI      2. NO      (si es NO, diligencie los víveres faltantes o devueltos/rechazados)']],{h:6,pg});
+y=table(d,y,[70,38,30,57.9],['Nombre del víver','Unidad de medida','Cantidad','Observaciones'],[['','','',''],['','','',''],['','','','']],{h:6,pg});
+d.rect(10,y,195.9,14).setFont('helvetica','bold').setFontSize(7.5).text('Observaciones:',11.2,y+4);y+=17;
+[['RECIBE ESTABLECIMIENTO EDUCATIVO','',''],['ENTREGA OPERADOR / PROVEEDOR',E.oper,E.ccOper],['RECIBE MUNICIPIO',E.recibe,E.ccRec]].forEach((b,i)=>{const x=10+i*65.3;d.rect(x,y,65.3,30).setFont('helvetica','bold').setFontSize(7).text(b[0],x+32.65,y+4,{align:'center'});
+d.setFont('helvetica','normal').text('FIRMA:',x+2,y+12).text('Nombre: '+b[1],x+2,y+18,{maxWidth:61}).text('Cargo:',x+2,y+22.5).text('C.C.: '+b[2],x+2,y+27)})}
+function provPdf(){const d=nd(),E=S.ent,P=provider(),sub='Consumo del '+fd(E.desde)+' al '+fd(E.hasta)+' · Operador: '+E.oper;
+const pg=()=>ph(d,'LISTA PARA EL PROVEEDOR – ENTREGA N° '+E.num,sub);let y=pg();const cw=(195.9-86)/P.C.length;
+const rows=P.rows.map(r=>r.map((v,i)=>i>1?fq(P.C[i-2],v):v));rows.push(['TOTAL',P.cup,...P.tot.map((v,i)=>fq(P.C[i],v))]);
+y=table(d,y,[70,16,...P.C.map(()=>cw)],['Sede','Cupos',...P.C.map(p=>p.n)],rows,{al:['l','r',...P.C.map(()=>'r')],bl:1,fs:7,pg});
+d.addPage();const pg2=()=>ph(d,'CONSOLIDADO TOTAL DE VÍVERES – ENTREGA N° '+E.num,sub);y=pg2();
+const A=act(),t=S.prods.map(p=>[p,A.reduce((a,s)=>a+qty(p,s),0)]).filter(a=>a[1]>0).map(([p,q])=>[p.n,p.u,fq(p,q)]);
+table(d,y,[100,50,45.9],['Producto','Medida o empaque','Cantidad total'],t,{al:['l','l','r'],pg:pg2});return d}
+async function pdfAll(){await loadImgs;const d=nd();act().forEach((s,i)=>{if(i)d.addPage();acta(d,s)});dl(d.output('blob'),'Actas_entrega_'+S.ent.num+'.pdf')}
+async function zipAll(){await loadImgs;const z=new JSZip(),A=act();for(let i=0;i<A.length;i++){$('msg').textContent='Generando '+(i+1)+'/'+A.length+'…';await new Promise(r=>setTimeout(r));const d=nd();acta(d,A[i]);z.file(String(i+1).padStart(2,'0')+' '+A[i].n.replace(/[^\w ÁÉÍÓÚÑáéíóúñ.-]/g,'').trim()+'.pdf',d.output('arraybuffer'))}
+z.file('00 LISTA PROVEEDOR.pdf',provPdf().output('arraybuffer'));dl(await z.generateAsync({type:'blob'}),'Actas_individuales_entrega_'+S.ent.num+'.zip');$('msg').textContent='Listo'}
+init();
+</script></body></html>
