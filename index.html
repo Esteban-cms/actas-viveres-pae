@@ -2,31 +2,48 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="data.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap">
 <style>
-body{font:14px Arial,sans-serif;margin:0;background:#f4f6f8;color:#222}
-header{background:#1b5e20;color:#fff;padding:10px 16px}header h1{margin:0;font-size:18px}
-nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px 16px;background:#e0e6e0}
-nav button{padding:7px 14px;border:0;border-radius:4px;background:#fff;cursor:pointer}nav button.on{background:#1b5e20;color:#fff}
-main{padding:12px 16px}section{display:none;background:#fff;padding:12px;border-radius:6px;overflow-x:auto}
-.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
-label{display:flex;flex-direction:column;font-size:12px;color:#555;gap:2px}
-input{padding:5px;border:1px solid #bbb;border-radius:3px;font:13px Arial;box-sizing:border-box;width:100%}
-table{border-collapse:collapse}td,th{border:1px solid #ddd;padding:2px;font-size:12px}th{background:#eee}
-td input{border:0;min-width:70px}td:first-child input{min-width:230px}
-.chip{display:inline-block;background:#eef3ee;border:1px solid #bcd;border-radius:14px;padding:4px 10px;margin:3px}
-.chip input{width:52px;display:inline}.chip input[type=checkbox]{width:auto}
-b.x,.chip b{cursor:pointer;color:#c00;padding:0 6px}
-.p{background:#1b5e20;color:#fff;border:0;border-radius:4px;padding:9px 16px;margin:4px 6px 4px 0;cursor:pointer;font-size:14px}
-.s{padding:7px 12px;margin:3px;cursor:pointer}.n{color:#666;font-size:12px}
-#gr td input{width:46px;min-width:0;text-align:right}#gr td:first-child{position:sticky;left:0;background:#fff;white-space:nowrap}
-nav button.adv{background:#fff3cd}nav button.adv.on{background:#8a6d00;color:#fff}nav button.adv:nth-child(4){margin-left:28px}.warn{background:#fff3cd;padding:8px;border-radius:4px;font-size:12px}
+:root{--ink:#1d2a31;--muted:#5d6b73;--line:#d9e0e3;--bg:#f3f5f4;--green:#1c6b4b;--green-d:#134e36;--amber:#f2b705;--amber-bg:#fff6d6}
+*{box-sizing:border-box}
+body{font:15px/1.45 'Public Sans',system-ui,Arial,sans-serif;margin:0;background:var(--bg);color:var(--ink)}
+.top{display:flex;align-items:center;gap:28px;flex-wrap:wrap;background:#fff;padding:14px 28px 16px;border-bottom:1px solid var(--line);position:relative}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:4px;background:linear-gradient(90deg,#f2b705 0 50%,#1f4e9c 50% 75%,#c8202f 75%)}
+.logos{display:flex;align-items:center;gap:18px}.logos img{height:40px;width:auto}
+.top h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}.top p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.wrap{display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;max-width:1280px;margin:0 auto;padding:26px 28px}
+nav{display:flex;flex-direction:column;gap:2px;align-self:start;position:sticky;top:16px}
+nav h4{margin:16px 12px 6px;font-size:12.5px;font-weight:600;color:var(--muted)}nav h4:first-child{margin-top:0}
+nav button{text-align:left;border:0;border-left:3px solid transparent;background:none;padding:9px 12px;border-radius:6px;font:inherit;color:var(--ink);cursor:pointer}
+nav button:hover{background:#e6ebe8}nav button.on{background:#fff;border-left-color:var(--green);font-weight:600;box-shadow:0 0 0 1px var(--line)}nav button.adv.on{border-left-color:var(--amber)}
+.ph h2{margin:0;font-size:24px;letter-spacing:-.015em}.ph p{margin:4px 0 16px;color:var(--muted);max-width:70ch}
+.ph.adv p{background:var(--amber-bg);border-left:4px solid var(--amber);padding:8px 12px;color:var(--ink);border-radius:4px}
+section{display:none;background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px;overflow-x:auto}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+label{display:flex;flex-direction:column;font-size:13px;font-weight:500;color:var(--muted);gap:5px}
+input,select{padding:8px 10px;border:1px solid #b9c4c9;border-radius:6px;font:inherit;color:var(--ink);background:#fff;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #8fc9ad;outline-offset:1px}
+h3{font-size:16px;margin:28px 0 4px}select{width:auto;min-width:280px}
+table{border-collapse:collapse;width:100%}th{position:sticky;top:0;background:#eef2f0;text-align:left;font-size:12.5px;font-weight:600;padding:9px 8px;border-bottom:1px solid var(--line)}
+td{border-bottom:1px solid #edf1f2;padding:2px 4px;font-size:13px}td input{border:1px solid transparent;border-radius:4px;padding:6px;min-width:70px}td input:hover{border-color:var(--line)}td:first-child input{min-width:230px}tr:hover td{background:#f8faf9}
+#dias{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px}
+label.chip{flex-direction:row;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:10px;font-size:13px;font-weight:400;color:var(--ink);cursor:pointer;background:#fafbfa}
+label.chip:has(input:checked){background:#e7f3ed;border-color:var(--green)}label.chip input{width:auto}
+#cnt{font-weight:600;margin-top:12px}
+.p{background:var(--green);color:#fff;border:0;border-radius:6px;padding:11px 18px;margin:4px 8px 4px 0;font:inherit;font-weight:600;cursor:pointer}.p:hover{background:var(--green-d)}
+.s{background:#fff;border:1px solid #b9c4c9;border-radius:6px;padding:8px 14px;margin:8px 8px 0 0;font:inherit;cursor:pointer}.s:hover{background:#f1f5f3}
+b.x{color:#b3261e;cursor:pointer;padding:4px 9px;border-radius:4px}b.x:hover{background:#fdecea}
+.n{color:var(--muted);font-size:13px;max-width:75ch}hr{border:0;border-top:1px solid var(--line);margin:26px 0 8px}
+.stats{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap}.stats div{flex:1;min-width:150px;border:1px solid var(--line);border-radius:6px;padding:10px 14px;color:var(--muted);font-size:13px}.stats b{display:block;font-size:26px;color:var(--ink);font-weight:700}
+#gr td input{width:48px;min-width:0;text-align:right}#gr td:first-child{position:sticky;left:0;background:#fff;white-space:nowrap}
+@media(max-width:820px){.wrap{grid-template-columns:1fr;padding:16px}nav{flex-direction:row;overflow-x:auto;position:static}nav h4{display:none}nav button{white-space:nowrap;border-left:0;border-bottom:3px solid transparent}nav button.on{border-bottom-color:var(--green)}#dias{grid-template-columns:repeat(2,1fr)}.top{padding:12px 16px 16px}}
 </style></head><body>
-<header><h1>Aplicativo de Actas de Víveres – PAE</h1></header>
-<nav id="nav"></nav>
-<main>
+<header class=top><div class=logos id=logos></div><div><h1>Actas de entrega de víveres</h1><p>Programa de Alimentación Escolar</p></div></header>
+<div class=wrap><nav id=nav></nav>
+<main><div class=ph id=ph><h2 id=pt></h2><p id=pd></p></div>
 <section id="t-ent"></section><section id="t-sed"></section><section id="t-pro"></section><section id="t-gr"></section>
 <section id="t-gen"></section>
-</main>
+</main></div>
 <script>
 const $=id=>document.getElementById(id);
 let S=JSON.parse(localStorage.getItem('pae2')||'null')||JSON.parse(JSON.stringify(DEF));
@@ -47,18 +64,19 @@ function provider(){const C=S.prods.filter(p=>p.d),A=act();return{C,rows:A.map(s
 const F=[['num','N° de entrega','number'],['oper','Operador / proveedor'],['mun','Municipio'],['sub','Subregión'],['lugar','Lugar de entrega'],['hora','Hora de entrega','time'],['veh','Vehículo / Marca'],['placa','Placa'],['fecha','Fecha de entrega','date'],['desde','Consumo desde','date'],['hasta','Consumo hasta','date'],['cod','Código (encabezado del acta)'],['ver','Versión (encabezado)'],['fdoc','Fecha (encabezado)']];
 function rEnt(){const o=(v,t)=>`<option value=${v} ${S.ent.sem==v?'selected':''}>${t}</option>`;$('t-ent').innerHTML='<div class=g>'+F.map(([k,l,t])=>`<label>${l}${inp('ent.'+k,S.ent[k],t)}</label>`).join('')+'</div><h3>Semanas de esta entrega</h3><select onchange="setSem(this.value)" style="padding:6px">'+o(1,'Semanas 1 y 2 (menús 1 al 10)')+o(3,'Semanas 3 y 4 (menús 11 al 20)')+'</select><h3>Días de entrega</h3><p class=n>Cada entrega cubre dos semanas (10 días). Desmarca los días sin clase: no se entregan.</p><div id=dias></div><p id=cnt></p>';rDias()}
 function setSem(v){S.ent.sem=+v;S.menus.forEach((x,i)=>x.m=i+(+v==3?11:1));save();rDias()}
-function rDias(){$('dias').innerHTML=S.menus.map((m,i)=>`<span class=chip><input type=checkbox ${m.on?'checked':''} onchange="set('menus.${i}.on',this.checked);cnt()"> Semana ${(i<5?0:1)+(S.ent.sem==3?3:1)} · Día ${i%5+1} (menú ${m.m})</span>`).join('');cnt()}
+function rDias(){$('dias').innerHTML=S.menus.map((m,i)=>`<span class=chip><input type=checkbox ${m.on?'checked':''} onchange="set('menus.${i}.on',this.checked);cnt()"> Semana ${(i<5?0:1)+(S.ent.sem==3?3:1)} · Día ${i%5+1} (menú ${m.m})</label>`).join('');cnt()}
 const cnt=()=>$('cnt').textContent='Días a entregar: '+ndias();
 function del(a,i){S[a].splice(i,1);save();rSedes();rProds();rGr()}
 function rSedes(){$('t-sed').innerHTML='<table><tr><th>Sede educativa<th>Código DANE<th>Cupos<th></tr>'+S.sedes.map((s,i)=>`<tr><td>${inp(`sedes.${i}.n`,s.n)}<td>${inp(`sedes.${i}.dane`,s.dane)}<td>${inp(`sedes.${i}.c`,s.c,'number')}<td><b class=x onclick="del('sedes',${i})">×</b>`).join('')+'</table><button class=s onclick="S.sedes.push({n:\'\',c:0,dane:\'\'});save();rSedes()">+ Agregar sede</button><p class=n>Las sedes con 0 cupos no generan acta.</p>'}
-function rProds(){$('t-pro').innerHTML='<p class=warn>Configuración que casi no cambia: modifícala solo cuando cambie la minuta, un producto o su empaque.</p><p class=n>Unidad: texto que sale en el acta (ej. Bolsa/500gr). Gramos por empaque: lo que pesa cada unidad (1 si se entrega a granel en gramos). ★ = aparece en la lista del proveedor.</p><table><tr><th>Producto<th>Unidad / empaque<th>Gramos por empaque<th>★ Lista proveedor<th></tr>'+S.prods.map((p,i)=>`<tr><td>${inp(`prods.${i}.n`,p.n)}<td>${inp(`prods.${i}.u`,p.u)}<td>${inp(`prods.${i}.e`,p.e,'number')}<td style="text-align:center"><input type=checkbox style="width:auto" ${p.d?'checked':''} onchange="set('prods.${i}.d',this.checked)"><td><b class=x onclick="del('prods',${i})">×</b>`).join('')+'</table><button class=s onclick="S.prods.push({n:\'NUEVO PRODUCTO\',u:\'gr\',e:1,g:Array(20).fill(0),d:false});save();rProds();rGr()">+ Agregar producto</button>'}
-function rGr(){$('t-gr').innerHTML='<p class=warn>Configuración que casi no cambia: modifícala solo cuando cambie la minuta.</p><p class=n>Gramos (o unidades) por cupo para cada menú.</p><table id=gr><tr><th>Producto'+Array.from({length:20},(_,j)=>`<th>M${j+1}`).join('')+'</tr>'+S.prods.map((p,i)=>`<tr><td>${esc(p.n)}`+Array.from({length:20},(_,j)=>`<td><input type=number step=any value="${p.g[j]||0}" oninput="set('prods.${i}.g.${j}',this.value,1)">`).join('')).join('')+'</table>'}
-function rGen(){const P=provider();$('t-gen').innerHTML=`<p><b>${act().length}</b> sedes con cupos · <b>${P.cup}</b> cupos · <b>${ndias()}</b> días de entrega</p>
+function rProds(){$('t-pro').innerHTML='<p class=n>Unidad: texto que sale en el acta (ej. Bolsa/500gr). Gramos por empaque: lo que pesa cada unidad (1 si se entrega a granel en gramos). ★ = aparece en la lista del proveedor.</p><table><tr><th>Producto<th>Unidad / empaque<th>Gramos por empaque<th>★ Lista proveedor<th></tr>'+S.prods.map((p,i)=>`<tr><td>${inp(`prods.${i}.n`,p.n)}<td>${inp(`prods.${i}.u`,p.u)}<td>${inp(`prods.${i}.e`,p.e,'number')}<td style="text-align:center"><input type=checkbox style="width:auto" ${p.d?'checked':''} onchange="set('prods.${i}.d',this.checked)"><td><b class=x onclick="del('prods',${i})">×</b>`).join('')+'</table><button class=s onclick="S.prods.push({n:\'NUEVO PRODUCTO\',u:\'gr\',e:1,g:Array(20).fill(0),d:false});save();rProds();rGr()">+ Agregar producto</button>'}
+function rGr(){$('t-gr').innerHTML='<p class=n>Gramos (o unidades) por cupo para cada menú.</p><table id=gr><tr><th>Producto'+Array.from({length:20},(_,j)=>`<th>M${j+1}`).join('')+'</tr>'+S.prods.map((p,i)=>`<tr><td>${esc(p.n)}`+Array.from({length:20},(_,j)=>`<td><input type=number step=any value="${p.g[j]||0}" oninput="set('prods.${i}.g.${j}',this.value,1)">`).join('')).join('')+'</table>'}
+function rGen(){const P=provider();$('t-gen').innerHTML=`<div class=stats><div><b>${act().length}</b>sedes con cupos</div><div><b>${P.cup}</b>cupos en total</div><div><b>${ndias()}</b>días de entrega</div></div>
 <button class=p onclick="pdfAll()">Descargar PDF con todas las actas</button><button class=p onclick="zipAll()">Descargar ZIP (un PDF por sede)</button><button class=p onclick="dl(provPdf().output('blob'),'Lista_proveedor.pdf')">Lista del proveedor (PDF)</button> <span id=msg class=n></span>
 <h3>Lista del proveedor</h3><table><tr><th>Sede<th>Cupos`+P.C.map(p=>`<th>${esc(p.n)}`).join('')+'</tr>'+P.rows.map(r=>'<tr>'+r.map((v,i)=>`<td>${i>1?fq(P.C[i-2],v):esc(v)}`).join('')).join('')+`<tr><th>TOTAL<th>${P.cup}`+P.tot.map((v,i)=>`<th>${fq(P.C[i],v)}`).join('')+`</tr></table><hr><button class=s onclick="expo()">Guardar configuración (.json)</button><label class=s style="display:inline">Cargar configuración <input type=file accept=.json onchange="impo(this.files[0])" style="width:auto"></label><button class=s onclick="reset()">Restaurar datos originales</button>`}
-const T=[['ent','1. Entrega'],['sed','2. Sedes y cupos'],['gen','3. Generar'],['pro','⚙ Productos y empaques'],['gr','⚙ Gramajes por menú']];
-function tab(k){T.forEach(([t])=>{$('t-'+t).style.display=t==k?'block':'none'});[...$('nav').children].forEach((b,i)=>b.className=(i>2?'adv ':'')+(T[i][0]==k?'on':''));if(k=='gen')rGen()}
-function init(){$('nav').innerHTML=T.map(([k,l],i)=>`<button class="${i>2?'adv':''}" onclick="tab('${k}')">${l}</button>`).join('');rEnt();rSedes();rProds();rGr();tab('ent')}
+const PD={ent:['Datos de la entrega','Completa los datos generales y marca los días con clase de estas dos semanas.'],sed:['Sedes y cupos','Actualiza los cupos de cada sede. Las sedes con 0 cupos no generan acta.'],gen:['Generar documentos','Revisa el resumen y descarga las actas y la lista del proveedor.'],pro:['Productos y empaques','Configuración que casi no cambia: modifícala solo cuando cambie un producto o su empaque.'],gr:['Gramajes por menú','Configuración que casi no cambia: modifícala solo cuando cambie la minuta.']};
+const T=[['ent','Entrega',0],['sed','Sedes y cupos',0],['gen','Generar',0],['pro','Productos y empaques',1],['gr','Gramajes por menú',1]];
+function tab(k){T.forEach(([t])=>{$('t-'+t).style.display=t==k?'block':'none'});document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.k==k));$('pt').textContent=PD[k][0];$('pd').textContent=PD[k][1];$('ph').className=T.find(t=>t[0]==k)[2]?'ph adv':'ph';if(k=='gen')rGen();scrollTo(0,0)}
+function init(){let h='<h4>Cada entrega</h4>';T.forEach(([k,l,a],i)=>{if(i==3)h+='<h4>Configuración avanzada</h4>';h+=`<button data-k="${k}" class="${a?'adv':''}" onclick="tab('${k}')">${a?'':(i+1)+'. '}${l}</button>`});$('nav').innerHTML=h;$('logos').innerHTML=['men','pae','gob','esc'].map(k=>`<img src="${LOGOS[k]}" alt="">`).join('');rEnt();rSedes();rProds();rGr();tab('ent')}
 const expo=()=>dl(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),'config_pae.json');
 function impo(f){const r=new FileReader();r.onload=()=>{S=JSON.parse(r.result);save();init()};r.readAsText(f)}
 function reset(){if(confirm('¿Restaurar los datos originales?')){S=JSON.parse(JSON.stringify(DEF));save();init()}}
