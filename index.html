@@ -19,6 +19,7 @@ b.x,.chip b{cursor:pointer;color:#c00;padding:0 6px}
 .p{background:#1b5e20;color:#fff;border:0;border-radius:4px;padding:9px 16px;margin:4px 6px 4px 0;cursor:pointer;font-size:14px}
 .s{padding:7px 12px;margin:3px;cursor:pointer}.n{color:#666;font-size:12px}
 #gr td input{width:46px;min-width:0;text-align:right}#gr td:first-child{position:sticky;left:0;background:#fff;white-space:nowrap}
+nav button.adv{background:#fff3cd}nav button.adv.on{background:#8a6d00;color:#fff}nav button.adv:nth-child(4){margin-left:28px}.warn{background:#fff3cd;padding:8px;border-radius:4px;font-size:12px}
 </style></head><body>
 <header><h1>Aplicativo de Actas de Víveres – PAE</h1></header>
 <nav id="nav"></nav>
@@ -28,8 +29,8 @@ b.x,.chip b{cursor:pointer;color:#c00;padding:0 6px}
 </main>
 <script>
 const $=id=>document.getElementById(id);
-let S=JSON.parse(localStorage.getItem('pae')||'null')||JSON.parse(JSON.stringify(DEF));
-const save=()=>{try{localStorage.setItem('pae',JSON.stringify(S))}catch(e){}};
+let S=JSON.parse(localStorage.getItem('pae2')||'null')||JSON.parse(JSON.stringify(DEF));
+const save=()=>{try{localStorage.setItem('pae2',JSON.stringify(S))}catch(e){}};
 function set(p,v,num){const k=p.split('.');let o=S;for(let i=0;i<k.length-1;i++)o=o[k[i]];o[k[k.length-1]]=num?(parseFloat(v)||0):v;save()}
 const esc=s=>String(s==null?'':s).replace(/"/g,'&quot;').replace(/</g,'&lt;');
 const inp=(p,v,t)=>`<input type="${t||'text'}" ${t=='number'?'step="any"':''} value="${esc(v)}" oninput="set('${p}',this.value,${t=='number'})">`;
@@ -43,20 +44,21 @@ const fq=(p,q)=>p.e==1?(q/1000).toFixed(2)+' kg':String(q);
 const ndias=()=>S.menus.filter(m=>m.on).length;
 function provider(){const C=S.prods.filter(p=>p.d),A=act();return{C,rows:A.map(s=>[s.n,s.c,...C.map(p=>qty(p,s))]),tot:C.map(p=>A.reduce((a,s)=>a+qty(p,s),0)),cup:A.reduce((a,s)=>a+s.c,0)}}
 /* ---- pantallas ---- */
-const F=[['num','N° de entrega','number'],['oper','Operador / proveedor'],['ccOper','C.C. de quien entrega'],['recibe','Recibe (municipio)'],['ccRec','C.C. de quien recibe'],['mun','Municipio'],['sub','Subregión'],['lugar','Lugar de entrega'],['hora','Hora de entrega','time'],['veh','Vehículo / Marca'],['placa','Placa'],['fecha','Fecha de entrega','date'],['desde','Consumo desde','date'],['hasta','Consumo hasta','date'],['cA','Ciclo de menú A','number'],['cB','Ciclo de menú B','number']];
-function rEnt(){$('t-ent').innerHTML='<div class=g>'+F.map(([k,l,t])=>`<label>${l}${inp('ent.'+k,S.ent[k],t)}</label>`).join('')+'</div><h3>Días de entrega</h3><p class=n>Desmarca los días sin clase: no se entregan. Cada día usa los gramos del número de menú que indiques (1 a 20).</p><div id=dias></div><button class=s onclick="S.menus.push({m:1,on:true});save();rDias()">+ Agregar día</button>';rDias()}
-function rDias(){$('dias').innerHTML=S.menus.map((m,i)=>`<span class=chip>Día ${i+1} <input type=checkbox ${m.on?'checked':''} onchange="set('menus.${i}.on',this.checked);cnt()"> menú <input type=number min=1 max=20 value=${m.m} oninput="set('menus.${i}.m',this.value,1)"><b onclick="S.menus.splice(${i},1);save();rDias()">×</b></span>`).join('')+'<p id=cnt></p>';cnt()}
+const F=[['num','N° de entrega','number'],['oper','Operador / proveedor'],['mun','Municipio'],['sub','Subregión'],['lugar','Lugar de entrega'],['hora','Hora de entrega','time'],['veh','Vehículo / Marca'],['placa','Placa'],['fecha','Fecha de entrega','date'],['desde','Consumo desde','date'],['hasta','Consumo hasta','date'],['cod','Código (encabezado del acta)'],['ver','Versión (encabezado)'],['fdoc','Fecha (encabezado)']];
+function rEnt(){const o=(v,t)=>`<option value=${v} ${S.ent.sem==v?'selected':''}>${t}</option>`;$('t-ent').innerHTML='<div class=g>'+F.map(([k,l,t])=>`<label>${l}${inp('ent.'+k,S.ent[k],t)}</label>`).join('')+'</div><h3>Semanas de esta entrega</h3><select onchange="setSem(this.value)" style="padding:6px">'+o(1,'Semanas 1 y 2 (menús 1 al 10)')+o(3,'Semanas 3 y 4 (menús 11 al 20)')+'</select><h3>Días de entrega</h3><p class=n>Cada entrega cubre dos semanas (10 días). Desmarca los días sin clase: no se entregan.</p><div id=dias></div><p id=cnt></p>';rDias()}
+function setSem(v){S.ent.sem=+v;S.menus.forEach((x,i)=>x.m=i+(+v==3?11:1));save();rDias()}
+function rDias(){$('dias').innerHTML=S.menus.map((m,i)=>`<span class=chip><input type=checkbox ${m.on?'checked':''} onchange="set('menus.${i}.on',this.checked);cnt()"> Semana ${(i<5?0:1)+(S.ent.sem==3?3:1)} · Día ${i%5+1} (menú ${m.m})</span>`).join('');cnt()}
 const cnt=()=>$('cnt').textContent='Días a entregar: '+ndias();
 function del(a,i){S[a].splice(i,1);save();rSedes();rProds();rGr()}
 function rSedes(){$('t-sed').innerHTML='<table><tr><th>Sede educativa<th>Código DANE<th>Cupos<th></tr>'+S.sedes.map((s,i)=>`<tr><td>${inp(`sedes.${i}.n`,s.n)}<td>${inp(`sedes.${i}.dane`,s.dane)}<td>${inp(`sedes.${i}.c`,s.c,'number')}<td><b class=x onclick="del('sedes',${i})">×</b>`).join('')+'</table><button class=s onclick="S.sedes.push({n:\'\',c:0,dane:\'\'});save();rSedes()">+ Agregar sede</button><p class=n>Las sedes con 0 cupos no generan acta.</p>'}
-function rProds(){$('t-pro').innerHTML='<p class=n>Unidad: texto que sale en el acta (ej. Bolsa/500gr). Gramos por empaque: lo que pesa cada unidad (1 si se entrega a granel en gramos). ★ = aparece en la lista del proveedor.</p><table><tr><th>Producto<th>Unidad / empaque<th>Gramos por empaque<th>★ Lista proveedor<th></tr>'+S.prods.map((p,i)=>`<tr><td>${inp(`prods.${i}.n`,p.n)}<td>${inp(`prods.${i}.u`,p.u)}<td>${inp(`prods.${i}.e`,p.e,'number')}<td style="text-align:center"><input type=checkbox style="width:auto" ${p.d?'checked':''} onchange="set('prods.${i}.d',this.checked)"><td><b class=x onclick="del('prods',${i})">×</b>`).join('')+'</table><button class=s onclick="S.prods.push({n:\'NUEVO PRODUCTO\',u:\'gr\',e:1,g:Array(20).fill(0),d:false});save();rProds();rGr()">+ Agregar producto</button>'}
-function rGr(){$('t-gr').innerHTML='<p class=n>Gramos (o unidades) por cupo para cada menú.</p><table id=gr><tr><th>Producto'+Array.from({length:20},(_,j)=>`<th>M${j+1}`).join('')+'</tr>'+S.prods.map((p,i)=>`<tr><td>${esc(p.n)}`+Array.from({length:20},(_,j)=>`<td><input type=number step=any value="${p.g[j]||0}" oninput="set('prods.${i}.g.${j}',this.value,1)">`).join('')).join('')+'</table>'}
+function rProds(){$('t-pro').innerHTML='<p class=warn>Configuración que casi no cambia: modifícala solo cuando cambie la minuta, un producto o su empaque.</p><p class=n>Unidad: texto que sale en el acta (ej. Bolsa/500gr). Gramos por empaque: lo que pesa cada unidad (1 si se entrega a granel en gramos). ★ = aparece en la lista del proveedor.</p><table><tr><th>Producto<th>Unidad / empaque<th>Gramos por empaque<th>★ Lista proveedor<th></tr>'+S.prods.map((p,i)=>`<tr><td>${inp(`prods.${i}.n`,p.n)}<td>${inp(`prods.${i}.u`,p.u)}<td>${inp(`prods.${i}.e`,p.e,'number')}<td style="text-align:center"><input type=checkbox style="width:auto" ${p.d?'checked':''} onchange="set('prods.${i}.d',this.checked)"><td><b class=x onclick="del('prods',${i})">×</b>`).join('')+'</table><button class=s onclick="S.prods.push({n:\'NUEVO PRODUCTO\',u:\'gr\',e:1,g:Array(20).fill(0),d:false});save();rProds();rGr()">+ Agregar producto</button>'}
+function rGr(){$('t-gr').innerHTML='<p class=warn>Configuración que casi no cambia: modifícala solo cuando cambie la minuta.</p><p class=n>Gramos (o unidades) por cupo para cada menú.</p><table id=gr><tr><th>Producto'+Array.from({length:20},(_,j)=>`<th>M${j+1}`).join('')+'</tr>'+S.prods.map((p,i)=>`<tr><td>${esc(p.n)}`+Array.from({length:20},(_,j)=>`<td><input type=number step=any value="${p.g[j]||0}" oninput="set('prods.${i}.g.${j}',this.value,1)">`).join('')).join('')+'</table>'}
 function rGen(){const P=provider();$('t-gen').innerHTML=`<p><b>${act().length}</b> sedes con cupos · <b>${P.cup}</b> cupos · <b>${ndias()}</b> días de entrega</p>
 <button class=p onclick="pdfAll()">Descargar PDF con todas las actas</button><button class=p onclick="zipAll()">Descargar ZIP (un PDF por sede)</button><button class=p onclick="dl(provPdf().output('blob'),'Lista_proveedor.pdf')">Lista del proveedor (PDF)</button> <span id=msg class=n></span>
 <h3>Lista del proveedor</h3><table><tr><th>Sede<th>Cupos`+P.C.map(p=>`<th>${esc(p.n)}`).join('')+'</tr>'+P.rows.map(r=>'<tr>'+r.map((v,i)=>`<td>${i>1?fq(P.C[i-2],v):esc(v)}`).join('')).join('')+`<tr><th>TOTAL<th>${P.cup}`+P.tot.map((v,i)=>`<th>${fq(P.C[i],v)}`).join('')+`</tr></table><hr><button class=s onclick="expo()">Guardar configuración (.json)</button><label class=s style="display:inline">Cargar configuración <input type=file accept=.json onchange="impo(this.files[0])" style="width:auto"></label><button class=s onclick="reset()">Restaurar datos originales</button>`}
-const T=[['ent','1. Entrega'],['sed','2. Sedes y cupos'],['pro','3. Productos y empaques'],['gr','4. Gramajes por menú'],['gen','5. Generar']];
-function tab(k){T.forEach(([t])=>{$('t-'+t).style.display=t==k?'block':'none'});[...$('nav').children].forEach((b,i)=>b.className=T[i][0]==k?'on':'');if(k=='gen')rGen()}
-function init(){$('nav').innerHTML=T.map(([k,l])=>`<button onclick="tab('${k}')">${l}</button>`).join('');rEnt();rSedes();rProds();rGr();tab('ent')}
+const T=[['ent','1. Entrega'],['sed','2. Sedes y cupos'],['gen','3. Generar'],['pro','⚙ Productos y empaques'],['gr','⚙ Gramajes por menú']];
+function tab(k){T.forEach(([t])=>{$('t-'+t).style.display=t==k?'block':'none'});[...$('nav').children].forEach((b,i)=>b.className=(i>2?'adv ':'')+(T[i][0]==k?'on':''));if(k=='gen')rGen()}
+function init(){$('nav').innerHTML=T.map(([k,l],i)=>`<button class="${i>2?'adv':''}" onclick="tab('${k}')">${l}</button>`).join('');rEnt();rSedes();rProds();rGr();tab('ent')}
 const expo=()=>dl(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),'config_pae.json');
 function impo(f){const r=new FileReader();r.onload=()=>{S=JSON.parse(r.result);save();init()};r.readAsText(f)}
 function reset(){if(confirm('¿Restaurar los datos originales?')){S=JSON.parse(JSON.stringify(DEF));save();init()}}
@@ -71,20 +73,34 @@ function table(d,y,w,head,rows,o){const h=o.h||4.4,al=o.al||[];
 const dr=(r,b,f)=>{let x=10;r.forEach((t,i)=>{if(f)d.setFillColor(225).rect(x,y,w[i],h,'FD');else d.rect(x,y,w[i],h);const a=al[i]||'l';d.setFont('helvetica',b||(o.lab||[]).includes(i)?'bold':'normal').setFontSize(o.fs||7.5).text(String(t),a=='r'?x+w[i]-1.2:x+1.2,y+h-1.3,{align:a=='r'?'right':'left',maxWidth:w[i]-2});x+=w[i]});y+=h};
 if(head)dr(head,1,1);rows.forEach((r,i)=>{if(y>268){d.addPage();y=o.pg();if(head)dr(head,1,1)}dr(r,o.bl&&i==rows.length-1,0)});return y}
 function bar(d,y,t){d.setFillColor(200,225,200).rect(10,y,195.9,5,'FD').setFont('helvetica','bold').setFontSize(8).text(t,107.95,y+3.6,{align:'center'});return y+5}
-function acta(d,s){const E=S.ent,pg=()=>ph(d,'ACTA DE ENTREGA DE VÍVERES','PROGRAMA DE ALIMENTACIÓN ESCOLAR – MUNICIPIO DE '+String(E.mun).toUpperCase()+' · '+s.n);let y=pg();
-const W=[34,64,32,65.9],R=[['Operador / proveedor',E.oper,'N° de entrega',E.num],['Municipio',E.mun,'Subregión',E.sub],['Establecimiento educativo',s.n,'Código DANE',s.dane],['Lugar de entrega',E.lugar,'Vehículo / Placa',E.veh+' / '+E.placa],['Fecha de entrega',fd(E.fecha),'Hora de entrega',E.hora],['Fechas de consumo','Del '+fd(E.desde)+' al '+fd(E.hasta),'Raciones (cupos) por día',s.c],['Ciclos de menú',E.cA+' y '+E.cB,'Días de consumo',ndias()]];
-y=bar(d,y,'DATOS GENERALES DE LA ENTREGA');y=table(d,y,W,null,R,{lab:[0,2],h:5.2,pg});
-y=bar(d,y+2,'RELACIÓN DE VÍVERES CON UNIDAD DE MEDIDA Y CANTIDAD A ENTREGAR');
-const rows=S.prods.map(p=>[p,raw(p,s)]).filter(a=>a[1]>0).map(([p,r])=>[p.n,p.u,+gpc(p).toFixed(2),+r.toFixed(3),Math.ceil(r-1e-9)]);
-y=table(d,y,[70,38,26,30,31.9],['Producto','Medida o empaque','Gr x cupo','Cant. sin redondear','Cant. a entregar'],rows,{al:['l','l','r','r','r'],pg});
-if(y>165){d.addPage();y=pg()}
-y=bar(d,y+3,'CERTIFICACIÓN DE RECIBIDO');
-y=table(d,y,[195.9],null,[['Criterio de calidad:   Excelente (4)      Buena (3)      Regular (2)      Mala (1)          Calificación: ______']],{h:6,pg});
-y=table(d,y,[195.9],null,[['Recibí cantidad conforme:   1. SI      2. NO      (si es NO, diligencie los víveres faltantes o devueltos/rechazados)']],{h:6,pg});
-y=table(d,y,[70,38,30,57.9],['Nombre del víver','Unidad de medida','Cantidad','Observaciones'],[['','','',''],['','','',''],['','','','']],{h:6,pg});
-d.rect(10,y,195.9,14).setFont('helvetica','bold').setFontSize(7.5).text('Observaciones:',11.2,y+4);y+=17;
-[['RECIBE ESTABLECIMIENTO EDUCATIVO','',''],['ENTREGA OPERADOR / PROVEEDOR',E.oper,E.ccOper],['RECIBE MUNICIPIO',E.recibe,E.ccRec]].forEach((b,i)=>{const x=10+i*65.3;d.rect(x,y,65.3,30).setFont('helvetica','bold').setFontSize(7).text(b[0],x+32.65,y+4,{align:'center'});
-d.setFont('helvetica','normal').text('FIRMA:',x+2,y+12).text('Nombre: '+b[1],x+2,y+18,{maxWidth:61}).text('Cargo:',x+2,y+22.5).text('C.C.: '+b[2],x+2,y+27)})}
+function bx(d,x,y,w,h,t,o){o=o||{};if(o.f)d.setFillColor(217).rect(x,y,w,h,'FD');else d.rect(x,y,w,h);if(t===''||t==null)return;const fs=o.fs||7;d.setFont('helvetica',o.b?'bold':'normal').setFontSize(fs).setTextColor(o.c||0);
+const a=o.a||'l',ls=d.splitTextToSize(String(t),w-1.5),lh=fs*.41,ty=o.t?y+3.3:y+h/2+1.1-(ls.length-1)*lh/2;d.text(ls,a=='c'?x+w/2:a=='r'?x+w-1:x+1,ty,{align:a=='c'?'center':a=='r'?'right':'left'});d.setTextColor(0)}
+function acta(d,s){const E=S.ent,L=10,H=4.3,sA=E.sem==3?3:1,dA=S.menus.slice(0,5).filter(m=>m.on).length,dB=S.menus.slice(5).filter(m=>m.on).length;
+const gw=(p,k)=>S.menus.slice(k*5,k*5+5).filter(m=>m.on).reduce((a,m)=>a+(+p.g[m.m-1]||0),0);
+const R=(y,h,ws,cs)=>{let x=L;ws.forEach((w,i)=>{const c=cs[i];bx(d,x,y,w,h,Array.isArray(c)?c[0]:c,Array.isArray(c)?c[1]:{});x+=w});return y+h};
+const B=(y,t)=>{bx(d,L,y,195.9,H,t,{b:1,f:1,a:'c'});return y+H};let y=10;
+d.rect(L,y,195.9,16);d.rect(L,y,118,16);let x=L+3;[['men',9],['pae',11],['gob',9.5],['esc',11]].forEach(([k,h])=>{const w=h*IM[k].width/IM[k].height;d.addImage(LOGOS[k],'PNG',x,y+(16-h)/2,w,h);x+=w+3});
+d.rect(L+118,y,44,16);d.setFont('helvetica','bold').setFontSize(8).text(['ACTA DE ENTREGA','DE VÍVERES PAE'],L+140,y+6.5,{align:'center'});
+[['Código',E.cod],['Version',E.ver],['Fecha',E.fdoc]].forEach((r,i)=>{bx(d,L+162,y+i*5.33,12,5.33,r[0],{fs:6});bx(d,L+174,y+i*5.33,21.9,5.33,r[1],{fs:6})});y+=16;
+y=B(y,'Datos generales de la entrega');const w4=[40,80,35,40.9];
+y=R(y,H,w4,['Operador',E.oper,'N° de entrega',[E.num,{b:1,a:'c'}]]);y=R(y,H,w4,['Municipio',E.mun,'Subregion',[E.sub,{a:'r'}]]);
+y=R(y,H,w4,['Establecimiento Educativo',s.n,'Código DANE',s.dane]);y=R(y,H,w4,['Lugar de entrega',E.lugar,'Vehículo / Placa',(E.veh||'')+' / '+(E.placa||'')]);y=R(y,H,w4,['Fecha de entrega',fd(E.fecha),'Hora de entrega',E.hora]);
+bx(d,L,y,47,3*H,'Programación de entrega');bx(d,L+47,y,72,H,'Fechas de consumo',{b:1,f:1,a:'c'});bx(d,L+119,y,35,H,'Número de cupos raciones',{b:1,f:1,a:'c',fs:6.3});bx(d,L+154,y,41.9,H,'Número de días de consumo',{b:1,f:1,a:'c',fs:6.3});
+bx(d,L+47,y+H,36,H,'Desde',{a:'c'});bx(d,L+83,y+H,36,H,'Hasta',{a:'c'});bx(d,L+47,y+2*H,36,H,fd(E.desde),{a:'c'});bx(d,L+83,y+2*H,36,H,fd(E.hasta),{a:'c'});
+bx(d,L+119,y+H,35,2*H,s.c,{a:'c'});bx(d,L+154,y+H,41.9,2*H,dA+dB,{a:'c'});y+=3*H;
+y=B(y,'Certificación de recibido');y=B(y,'Criterio de calidad');const g={c:150,a:'c'},k={a:'c'};
+y=R(y,H,[36,12,36,12,36,12,36,15.9],[['Excelente',k],['4',g],['Buena',k],['3',g],['Regular',k],['2',g],['Mala',k],['1',g]]);
+y=R(y,H,[48,14,32,14,32,55.9],['Recibí cantidad conforme',['1',g],['SI',k],['2',g],['NO',k],['En caso de responder negativamente complete:',{c:150,fs:6}]]);
+y=R(y,6,[48,74,34,39.9],['Alimentos devueltos/rechazados','','Alimentos faltantes','']);
+y=B(y,'Detalle de víveres faltantes o devueltos/rechazados');const w3=[47,37,36,75.9];y=R(y,H,w3,['Nombre','Unidad de medida','Cantidad','Observaciones'].map(t=>[t,{b:1,a:'c'}]));for(let i=0;i<4;i++)y=R(y,H,w3,['','','','']);
+y=B(y,'Relación de víveres con unidad de medida y cantidad a entregar');const wp=[56,19,19,19,19,24,20,19.9],C={b:1,a:'c',fs:6.5};
+bx(d,L,y,56,3*H,'Listado de víveres',{b:1,a:'c'});[['N° Semana',sA,'N° Semana',sA+1],['N° Días',dA,'N° Días',dB],['Gr x cupo','Gr x total cupos','Gr x cupo','Gr x total cupos']].forEach((r,i)=>r.forEach((t,j)=>bx(d,L+56+19*j,y+i*H,19,H,t,C)));
+bx(d,L+132,y,24,3*H,'Unidad de medida o empaque',C);bx(d,L+156,y,20,3*H,'Cantidad sin redondear',C);bx(d,L+176,y,19.9,3*H,'Cantidad entregada',C);y+=3*H;
+const c={a:'c',fs:6.5},f=v=>+v.toFixed(2),rh=3.75;
+S.prods.forEach(p=>{const a=gw(p,0),b=gw(p,1);if(a+b<=0)return;if(y+rh>269){d.addPage();y=10}const r=(a+b)*s.c/(p.e||1);
+y=R(y,rh,wp,[[p.n,{fs:6.5}],[f(a),c],[f(a*s.c),c],[f(b),c],[f(b*s.c),c],[p.u,c],[r.toFixed(1),c],[Math.ceil(r-1e-9),c]])});
+if(y>220){d.addPage();y=10}bx(d,L,y,195.9,14,'Observaciones',{t:1});y+=14;
+[0,1].forEach(i=>{const x=L+i*97.95;bx(d,x,y,97.95,14,'FIRMA',{t:1});['NOMBRE','CARGO','NUMERO DE CEDULA'].forEach((t,j)=>bx(d,x,y+14+j*5,97.95,5,t));bx(d,x,y+29,97.95,5,i?'Entrega      Municipio ____      Operador ____':'Recibe establecimiento educativo')})}
 function provPdf(){const d=nd(),E=S.ent,P=provider(),sub='Consumo del '+fd(E.desde)+' al '+fd(E.hasta)+' · Operador: '+E.oper;
 const pg=()=>ph(d,'LISTA PARA EL PROVEEDOR – ENTREGA N° '+E.num,sub);let y=pg();const cw=(195.9-86)/P.C.length;
 const rows=P.rows.map(r=>r.map((v,i)=>i>1?fq(P.C[i-2],v):v));rows.push(['TOTAL',P.cup,...P.tot.map((v,i)=>fq(P.C[i],v))]);
