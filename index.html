@@ -116,7 +116,8 @@ const nrm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036
 const fmtW=a=>a.length>1?a.slice(0,-1).join(', ')+' y '+a[a.length-1]:String(a[0]||'');
 /* ---------- estado ---------- */
 function fixS(o){const D=clone(DEF);o.ent=Object.assign({},D.ent,o.ent||{});if(!Array.isArray(o.sel)||o.sel.length!=20)o.sel=D.sel;
-if(!Array.isArray(o.prods))o.prods=D.prods;o.prods.forEach((p,i)=>{p.id=p.id||'p'+i;p.gp=(p.gp||[]).concat(Array(20).fill(0)).slice(0,20);p.gs=(p.gs||[]).concat(Array(20).fill(0)).slice(0,20);p.e=num(p.e)||1;p.d=!!p.d;p.pc=!!p.pc});
+if(Array.isArray(o.prods)&&!o.prods.some(p=>p.id=='aceite_soya')){const old=o.prods;o.prods=D.prods.map(p=>{const q=old.find(x=>x.id==p.id);return q&&p.id!='aceite_soya'?Object.assign({},p,{u:q.u,e:q.e,d:q.d,pc:q.pc}):p})}
+if(!Array.isArray(o.prods)||!o.prods.some(p=>[].concat(p.gp||[],p.gs||[]).some(v=>num(v)>0)))o.prods=D.prods;o.prods.forEach((p,i)=>{p.id=p.id||'p'+i;p.gp=(p.gp||[]).concat(Array(20).fill(0)).slice(0,20);p.gs=(p.gs||[]).concat(Array(20).fill(0)).slice(0,20);p.e=num(p.e)||1;p.d=!!p.d;p.pc=!!p.pc});
 if(!Array.isArray(o.sedes))o.sedes=D.sedes;o.sedes.forEach(s=>{s.cp=num(s.cp);s.cs=num(s.cs);s.mg=!!s.mg;if(!Array.isArray(s.g)||s.g.length!=14)s.g=Array(14).fill(0);s.n=s.n||'';s.dane=s.dane||''});o.v=27;return o}
 function fromOld(old){const n=clone(DEF);if(old&&old.ent)['oper','mun','sub','lugar','hora','veh','placa','num'].forEach(k=>{if(old.ent[k]!=null&&old.ent[k]!=='')n.ent[k]=old.ent[k]});
 if(old&&Array.isArray(old.sedes))n.sedes=old.sedes.map(s=>({n:s.n,dane:s.dane||'',cp:num(s.c),cs:0,mg:false,g:Array(14).fill(0)}));return n}
@@ -235,6 +236,7 @@ A.length?it('ok',`${A.length} sedes con cupos`,`${nf(tots(A).cp)} de primaria y 
 E.fecha?it('ok','Fecha de entrega: '+fd(E.fecha),`Consumo del ${fd(E.desde)} al ${fd(E.hasta)}`):it('wa','Falta la fecha de entrega','El acta saldría sin fecha de entrega ni fechas de consumo.');
 if(!E.oper)it('wa','Falta el operador / proveedor','Aparece en el encabezado del acta.');
 const ie=A.filter(s=>isIE(s)&&cS(s)==0);if(ie.length)it('wa','Instituciones sin cupos de secundaria',ie.map(s=>s.n).join('; ')+'. Si tienen bachillerato, reparta sus cupos.');
+if(ndias()&&!used().length)it('er','Ningún producto tiene gramos en los días marcados','Vaya a "Gramajes por menú" o pulse "Restaurar datos originales" al final de esta página.');
 const pc=used().filter(p=>p.pc);if(pc.length)it('wa',`${pc.length} productos con empaque por confirmar`,pc.map(p=>p.n).join(', ')+'. Revíselos en "Productos y empaques".');
 return L}
 function rGen(){const L=checks(),A=act(),T=tots(A),P=provider(),C=consol(),kg=C.reduce((a,c)=>a+c.kg,0),blk=L.some(x=>x.t=='er');
@@ -343,7 +345,7 @@ const E=new DataView(new ArrayBuffer(22));E.setUint32(0,0x06054b50,true);E.setUi
 const tick=()=>new Promise(r=>setTimeout(r,0));
 let BUSY=0;
 function busy(on,m,p){if(on!=BUSY){document.querySelectorAll('#t-gen button').forEach(b=>{if(on){b.dataset.d=b.disabled;b.disabled=true}else b.disabled=b.dataset.d=='true'});BUSY=on}const g=$('prog');if(g){g.style.display=on?'block':'none';g.firstChild.style.width=(p||0)+'%'}if($('msg'))$('msg').textContent=m||''}
-function pre(){if(!ndias()){info('Sin días seleccionados','Marque al menos un día en el paso 1.');return false}if(!act().length){info('Sin sedes con cupos','Escriba los cupos en el paso 2.');return false}return true}
+function pre(){if(ndias()&&!used().length){info('Sin gramajes','Los productos no tienen gramos para los días marcados, por eso el acta saldría vacía. Pulse "Restaurar datos originales" (abajo en esta página) o revise "Gramajes por menú".');return false}if(!ndias()){info('Sin días seleccionados','Marque al menos un día en el paso 1.');return false}if(!act().length){info('Sin sedes con cupos','Escriba los cupos en el paso 2.');return false}return true}
 const fail=e=>{console.error(e);busy(0);info('No se pudo generar','Ocurrió un error: '+(e&&e.message||e))};
 const fname=s=>s.replace(/[\\/:*?"<>|]/g,'').replace(/\s+/g,' ').trim();
 async function pdfAll(){if(!pre())return;try{const A=act();busy(1,'Generando actas…',2);await tick();const D=await newDoc();for(let i=0;i<A.length;i++){acta(D,A[i]);if(i%4==3){busy(1,`Generando acta ${i+1} de ${A.length}…`,100*(i+1)/A.length);await tick()}}
