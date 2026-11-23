@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Actas de víveres PAE 2027</title>
+<script src="pdf-lib.min.js"></script>
+<script src="data.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#1d2a31;--muted:#5d6b73;--line:#d9e0e3;--bg:#f3f5f4;--green:#1c6b4b;--green-d:#134e36;--green-l:#e7f3ed;--amber:#f2b705;--amber-bg:#fff6d6;--blue:#1f4e9c;--blue-l:#e8eef8;--red:#b3261e;--red-l:#fdecea}
+*{box-sizing:border-box}
+body{font:15px/1.45 'Public Sans',system-ui,'Segoe UI',Arial,sans-serif;margin:0;background:var(--bg);color:var(--ink)}
+button{font:inherit}
+.top{display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:#fff;padding:14px 28px 16px;border-bottom:1px solid var(--line);position:relative}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:4px;background:linear-gradient(90deg,#f2b705 0 50%,#1f4e9c 50% 75%,#c8202f 75%)}
+.logos{display:flex;align-items:center;gap:16px}.logos img{height:38px;width:auto}
+.top h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}.top p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.sum{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}.sum span{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;white-space:nowrap}.sum b{font-weight:700}
+.wrap{display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px;max-width:1320px;margin:0 auto;padding:26px 28px 60px}
+nav{display:flex;flex-direction:column;gap:2px;align-self:start;position:sticky;top:16px}
+nav h4{margin:16px 12px 6px;font-size:12.5px;font-weight:600;color:var(--muted)}nav h4:first-child{margin-top:0}
+nav button{display:flex;align-items:center;gap:10px;text-align:left;border:0;border-left:3px solid transparent;background:none;padding:9px 12px;border-radius:6px;color:var(--ink);cursor:pointer}
+nav button i{font-style:normal;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#dde5e1;font-size:12px;font-weight:700;flex:none}
+nav button.ok i{background:var(--green);color:#fff}
+nav button:hover{background:#e6ebe8}nav button.on{background:#fff;border-left-color:var(--green);font-weight:600;box-shadow:0 0 0 1px var(--line)}nav button.adv.on{border-left-color:var(--amber)}
+.ph h2{margin:0;font-size:24px;letter-spacing:-.015em}.ph p{margin:4px 0 16px;color:var(--muted);max-width:75ch}
+.ph.adv p{background:var(--amber-bg);border-left:4px solid var(--amber);padding:8px 12px;color:var(--ink);border-radius:4px}
+section{display:none}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin-bottom:18px}
+.card>h3:first-child{margin-top:0}.card h3{font-size:16px;margin:22px 0 6px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+label{display:flex;flex-direction:column;font-size:13px;font-weight:500;color:var(--muted);gap:5px}
+input,select,textarea{padding:8px 10px;border:1px solid #b9c4c9;border-radius:6px;font:inherit;color:var(--ink);background:#fff;width:100%}
+input:disabled{background:#f1f4f3;color:var(--muted)}
+input:focus-visible,select:focus-visible,button:focus-visible,textarea:focus-visible{outline:3px solid #8fc9ad;outline-offset:1px}
+.tbl{overflow:auto;border:1px solid var(--line);border-radius:8px;max-height:68vh}
+table{border-collapse:collapse;width:100%}
+th{position:sticky;top:0;z-index:2;background:#eef2f0;text-align:left;font-size:12.5px;font-weight:600;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th small{display:block;font-weight:400;color:var(--muted)}
+td{border-bottom:1px solid #edf1f2;padding:3px 5px;font-size:13px;vertical-align:middle}
+td input{border:1px solid transparent;border-radius:4px;padding:6px}td input:hover:not(:disabled){border-color:var(--line)}
+tr:hover td{background:#f8faf9}
+tfoot td,tr.tot td{font-weight:700;background:#f4f7f5;position:sticky;bottom:0}
+td.num,th.num{text-align:right}td.num input{text-align:right;width:84px}
+.p{background:var(--green);color:#fff;border:0;border-radius:6px;padding:11px 18px;font-weight:600;cursor:pointer}.p:hover{background:var(--green-d)}.p:disabled{opacity:.5;cursor:default}
+.s{background:#fff;border:1px solid #b9c4c9;border-radius:6px;padding:8px 14px;cursor:pointer;color:var(--ink)}.s:hover{background:#f1f5f3}
+.p.danger{background:var(--red)}.p.danger:hover{background:#8f1d17}.s.dng{color:var(--red);border-color:#e3b5b1}.s.dng:hover{background:var(--red-l)}
+.lk{background:none;border:0;color:var(--green);cursor:pointer;font-size:13px;text-decoration:underline;padding:2px 6px}
+b.x{color:var(--red);cursor:pointer;padding:4px 9px;border-radius:4px;font-size:16px}b.x:hover{background:var(--red-l)}
+.n{color:var(--muted);font-size:13px;max-width:80ch}
+.bar-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.bar-tools input[type=search]{max-width:320px}
+.acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}.stats div{border:1px solid var(--line);border-radius:8px;padding:10px 14px;color:var(--muted);font-size:13px;background:#fff}.stats b{display:block;font-size:24px;color:var(--ink);font-weight:700}
+.stats .pri b{color:var(--green)}.stats .sec b{color:var(--blue)}
+.seg{display:inline-flex;border:1px solid #b9c4c9;border-radius:8px;overflow:hidden}.seg button{border:0;background:#fff;padding:8px 16px;cursor:pointer}.seg button+button{border-left:1px solid #b9c4c9}.seg button.on{background:var(--green);color:#fff;font-weight:600}
+.wk{margin:18px 0 6px}.wh{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}.wh .n{margin-right:auto}
+.wd{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.day{position:relative;text-align:left;border:1px solid var(--line);border-radius:8px;background:#fafbfa;padding:10px 12px 10px;cursor:pointer;min-height:96px;color:var(--ink);transition:background .15s,border-color .15s}
+.day:hover{border-color:#9fb3a9}.day.on{background:var(--green-l);border-color:var(--green)}
+.day .dn{display:block;font-weight:700;font-size:13px}.day .dm{display:block;font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.35}
+.day .ck{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:5px;border:1.5px solid #9fb3a9;display:grid;place-items:center;font-size:13px;color:#fff;background:#fff}
+.day.on .ck{background:var(--green);border-color:var(--green)}
+.cnt{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;font-weight:600}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:2px 9px;margin-left:6px;white-space:nowrap}
+.tag.w{background:var(--amber-bg);color:#7a5b00}.tag.g{background:var(--green-l);color:var(--green)}.tag.b{background:var(--blue-l);color:var(--blue)}
+.grades{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px;padding:10px 6px}
+.grades label{font-size:12px}.grades input{text-align:right;padding:5px 7px}
+.grades .lv{grid-column:1/-1;font-size:12.5px;font-weight:600;color:var(--ink);margin-top:2px}
+tr.gr td{background:#f8faf9}
+.chk{list-style:none;padding:0;margin:0 0 6px}.chk li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #eef2f0;font-size:14px}.chk li:last-child{border:0}
+.chk i{font-style:normal;flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff}
+.chk .ok i{background:var(--green)}.chk .wa i{background:var(--amber);color:#3d2e00}.chk .er i{background:var(--red)}
+.chk small{display:block;color:var(--muted);font-size:12.5px}
+.gen{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.gen .p{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left}.gen .p small{font-weight:400;opacity:.85;font-size:12px}
+#msg{font-size:13px;color:var(--green);font-weight:600}
+.prog{height:6px;background:#e3e9e6;border-radius:3px;overflow:hidden;margin-top:10px;display:none}.prog i{display:block;height:100%;width:0;background:var(--green);transition:width .2s}
+iframe{width:100%;height:720px;border:1px solid var(--line);border-radius:8px;margin-top:12px;background:#eee}
+#gr td input{width:54px;min-width:0;text-align:right;padding:5px}#gr td:first-child{position:sticky;left:0;background:#fff;white-space:nowrap;z-index:1;font-size:12.5px}#gr th:first-child{left:0;z-index:3}
+#gr td.z input{color:#b0bcc1}#gr th.sel{background:#d6ebe0}#gr td.sel{background:#f2f9f5}
+#gr th{text-align:center}#gr th:first-child{text-align:left}
+.foot{display:flex;justify-content:space-between;gap:12px;margin-top:6px}
+dialog{border:0;border-radius:12px;padding:24px;max-width:560px;width:calc(100% - 32px);box-shadow:0 12px 40px rgba(0,0,0,.28);color:var(--ink);font-family:inherit}dialog::backdrop{background:rgba(20,30,35,.5)}
+dialog h3{margin:0 0 8px}.dact{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
+textarea{font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);background:#1d2a31;color:#fff;padding:12px 18px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;max-width:90vw;z-index:50}#toast.on{opacity:1;transform:translate(-50%,0)}
+.empty{padding:40px 16px;text-align:center;color:var(--muted)}.empty b{display:block;color:var(--ink);font-size:17px;margin-bottom:6px}
+.hcard{border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:16px 0;background:#fff}.hh{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px}.hh label{min-width:260px}
+.bar{display:grid;grid-template-columns:minmax(110px,220px) 1fr 86px;gap:10px;align-items:center;font-size:12.5px;margin:5px 0}.bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bar>div{background:#eef2f0;border-radius:3px}.bar i{display:block;height:12px;border-radius:3px}.bar b{text-align:right}
+details summary{cursor:pointer;font-weight:600;font-size:14px}details[open] summary{margin-bottom:12px}
+@media(max-width:860px){.wrap{grid-template-columns:1fr;padding:16px}nav{flex-direction:row;overflow-x:auto;position:static}nav h4{display:none}nav button{white-space:nowrap;border-left:0;border-bottom:3px solid transparent}nav button.on{border-bottom-color:var(--green)}.wd{grid-template-columns:repeat(2,1fr)}.top{padding:12px 16px 16px}.sum{margin-left:0}}
+</style></head><body>
+<header class=top><div class=logos id=logos></div><div><h1>Actas de entrega de víveres</h1><p>Programa de Alimentación Escolar · Ciclo de menús 2027 · Primaria y Secundaria</p></div><div class=sum id=sum></div></header>
+<div class=wrap><nav id=nav></nav>
+<main><div class=ph id=ph><h2 id=pt></h2><p id=pd></p></div>
+<section id="t-ent"></section><section id="t-sed"></section><section id="t-gen"></section><section id="t-his"></section><section id="t-pro"></section><section id="t-gr"></section>
+<div class=foot id=foot></div>
+</main></div>
+<dialog id=dlg><h3 id=dt></h3><p id=dm class=n></p><div class=dact><button class=s id=dcancel onclick="$('dlg').close()">Cancelar</button><button class="p danger" id=dok></button></div></dialog>
+<dialog id=dp><h3>Pegar cupos desde Excel</h3>
+<p class=n>En Excel seleccione las columnas, cópielas (Ctrl+C) y péguelas aquí (Ctrl+V). Se aceptan dos formas:</p>
+<p class=n><b>3 columnas:</b> código DANE o nombre de la sede · cupos primaria · cupos secundaria.<br><b>15 columnas:</b> código DANE o nombre · Prejardín · Jardín · Transición · 1° … 11° (matrícula por grado).</p>
+<textarea id=pta rows=8 placeholder="10510700016601&#9;520&#9;180"></textarea>
+<label style="flex-direction:row;align-items:center;gap:8px;margin-top:10px;color:var(--ink)"><input type=checkbox id=padd style="width:auto"> Agregar como nuevas las sedes que no se encuentren</label>
+<p id=pres class=n></p>
+<div class=dact><button class=s onclick="$('dp').close()">Cancelar</button><button class=s onclick="pPrev()">Revisar</button><button class=p id=papl disabled onclick="pApply()">Aplicar cupos</button></div></dialog>
+<div id=toast role=status></div>
+<script>
+const $=id=>document.getElementById(id);
+const KEY='pae27',HKEY='pae_h';
+const GR=['Prejardín','Jardín','Transición','1°','2°','3°','4°','5°','6°','7°','8°','9°','10°','11°'],NP=8;
+const clone=o=>JSON.parse(JSON.stringify(o));
+const num=v=>{const n=parseFloat(String(v==null?'':v).replace(',','.'));return isFinite(n)?n:0};
+const nf=(v,d=0)=>(+v||0).toLocaleString('es-CO',{minimumFractionDigits:d,maximumFractionDigits:d});
+const f2=v=>(Math.round((+v||0)*100)/100).toLocaleString('es-CO',{maximumFractionDigits:2});
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const fd=s=>s?s.split('-').reverse().join('/'):'';
+const nrm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+const fmtW=a=>a.length>1?a.slice(0,-1).join(', ')+' y '+a[a.length-1]:String(a[0]||'');
+/* ---------- estado ---------- */
+function fixS(o){const D=clone(DEF);o.ent=Object.assign({},D.ent,o.ent||{});if(!Array.isArray(o.sel)||o.sel.length!=20)o.sel=D.sel;
+if(!Array.isArray(o.prods))o.prods=D.prods;o.prods.forEach((p,i)=>{p.id=p.id||'p'+i;p.gp=(p.gp||[]).concat(Array(20).fill(0)).slice(0,20);p.gs=(p.gs||[]).concat(Array(20).fill(0)).slice(0,20);p.e=num(p.e)||1;p.d=!!p.d;p.pc=!!p.pc});
+if(!Array.isArray(o.sedes))o.sedes=D.sedes;o.sedes.forEach(s=>{s.cp=num(s.cp);s.cs=num(s.cs);s.mg=!!s.mg;if(!Array.isArray(s.g)||s.g.length!=14)s.g=Array(14).fill(0);s.n=s.n||'';s.dane=s.dane||''});o.v=27;return o}
+function fromOld(old){const n=clone(DEF);if(old&&old.ent)['oper','mun','sub','lugar','hora','veh','placa','num'].forEach(k=>{if(old.ent[k]!=null&&old.ent[k]!=='')n.ent[k]=old.ent[k]});
+if(old&&Array.isArray(old.sedes))n.sedes=old.sedes.map(s=>({n:s.n,dane:s.dane||'',cp:num(s.c),cs:0,mg:false,g:Array(14).fill(0)}));return n}
+let MIGR=0;
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v==27)return fixS(j)}catch(e){}
+try{const o=JSON.parse(localStorage.getItem('pae2'));if(o&&o.ent){MIGR=1;return fixS(fromOld(o))}}catch(e){}return fixS(clone(DEF))}
+let S=load(),H=[];try{H=JSON.parse(localStorage.getItem(HKEY)||'[]')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}sumUpd()};
+const saveH=()=>{try{localStorage.setItem(HKEY,JSON.stringify(H))}catch(e){}};
+function set(p,v,isn){const k=p.split('.');let o=S;for(let i=0;i<k.length-1;i++)o=o[k[i]];o[k[k.length-1]]=isn?num(v):v;save()}
+/* ---------- cálculo ---------- */
+const cP=s=>s.mg?s.g.slice(0,NP).reduce((a,b)=>a+num(b),0):num(s.cp);
+const cS=s=>s.mg?s.g.slice(NP).reduce((a,b)=>a+num(b),0):num(s.cs);
+const cT=s=>cP(s)+cS(s);
+const act=()=>S.sedes.filter(s=>cT(s)>0);
+const SELI=()=>S.sel.map((v,i)=>v?i:-1).filter(i=>i>=0);
+const ndias=()=>S.sel.filter(Boolean).length;
+const gsum=(a,I)=>I.reduce((t,i)=>t+num(a[i]),0);
+const gpc=(p,lv,I)=>gsum(p[lv],I||SELI());
+const raw=(p,s)=>(gpc(p,'gp')*cP(s)+gpc(p,'gs')*cS(s))/(p.e||1);
+const qty=(p,s)=>Math.ceil(raw(p,s)-1e-9);
+const used=()=>{const I=SELI();return S.prods.filter(p=>gsum(p.gp,I)+gsum(p.gs,I)>0)};
+const fq=(p,q)=>p.e==1?nf(q/1000,2)+' kg':nf(q);
+const fqu=(p,q)=>p.e==1?nf(q/1000,2):nf(q);
+const tots=A=>({cp:A.reduce((a,s)=>a+cP(s),0),cs:A.reduce((a,s)=>a+cS(s),0),ct:A.reduce((a,s)=>a+cT(s),0)});
+function provider(){const C=S.prods.filter(p=>p.d),A=act();return Object.assign({C,A,rows:A.map(s=>C.map(p=>qty(p,s))),tot:C.map(p=>A.reduce((a,s)=>a+qty(p,s),0))},tots(A))}
+function consol(){const A=act(),I=SELI(),T=tots(A);return used().map(p=>{const q=A.reduce((a,s)=>a+qty(p,s),0);return{p,q,kgp:gsum(p.gp,I)*T.cp/1000,kgs:gsum(p.gs,I)*T.cs/1000,kg:q*(p.e||1)/1000}})}
+const wkSel=()=>[0,1,2,3].filter(w=>S.sel.slice(w*5,w*5+5).some(Boolean));
+const dW=w=>S.sel.slice(w*5,w*5+5).filter(Boolean).length;
+const wIdx=w=>[0,1,2,3,4].map(j=>w*5+j).filter(i=>S.sel[i]);
+const isIE=s=>/^\s*I\.?\s*E/i.test(s.n);
+/* ---------- fechas y festivos ---------- */
+const pd=s=>new Date(s+'T12:00:00'),ds=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function festivos(y){const L=[],mon=t=>{const w=t.getDay();if(w!=1)t.setDate(t.getDate()+(8-w)%7)};const add=(m,d,n,mv)=>{const t=new Date(y,m-1,d,12);if(mv)mon(t);L.push([ds(t),n])};
+const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=(h+l-7*m+114)%31+1;
+const E=(n,nm,mv)=>{const t=new Date(y,mo-1,da+n,12);if(mv)mon(t);L.push([ds(t),nm])};
+add(1,1,'Año Nuevo');add(1,6,'Reyes Magos',1);add(3,19,'San José',1);E(-3,'Jueves Santo');E(-2,'Viernes Santo');add(5,1,'Día del Trabajo');E(39,'Ascensión del Señor',1);E(60,'Corpus Christi',1);E(68,'Sagrado Corazón',1);add(6,29,'San Pedro y San Pablo',1);add(7,20,'Día de la Independencia');add(8,7,'Batalla de Boyacá');add(8,15,'Asunción de la Virgen',1);add(10,12,'Día de la Raza',1);add(11,1,'Todos los Santos',1);add(11,11,'Independencia de Cartagena',1);add(12,8,'Inmaculada Concepción');add(12,25,'Navidad');return L.sort((p,q)=>p[0]<q[0]?-1:1)}
+const FS={},fsy=y=>FS[y]||(FS[y]=new Set(festivos(y).map(x=>x[0]))),isBD=d=>d.getDay()%6!=0&&!fsy(d.getFullYear()).has(ds(d));
+const nextBD=s=>{const d=pd(s);while(!isBD(d))d.setDate(d.getDate()+1);return ds(d)};
+const addBD=(s,n)=>{const d=pd(nextBD(s));while(n>0){d.setDate(d.getDate()+1);if(isBD(d))n--}return ds(d)};
+const plus1=s=>{const d=pd(s);d.setDate(d.getDate()+1);return ds(d)};
+function calc(){const E=S.ent,m=E.fecha?plus1(E.fecha):'';if(m&&(!E.desde||E.desde<m))E.desde=m;if(E.desde){E.desde=nextBD(E.desde);if(!E.hastaMan||!E.hasta||E.hasta<E.desde)E.hasta=addBD(E.desde,Math.max(ndias()-1,0))}save();
+const f=$('f-desde');if(f){f.min=m;f.value=E.desde||''}const g=$('f-hasta');if(g){g.min=E.desde||'';g.value=E.hasta||''}fest()}
+function fest(){const E=S.ent,el=$('dnote');if(!el)return;if(!E.desde){el.innerHTML='Escriba la fecha de entrega y el consumo empezará el siguiente día hábil.';return}const sug=addBD(E.desde,Math.max(ndias()-1,0)),end=E.hasta||sug,hs=[];for(let y=+E.desde.slice(0,4);y<=+end.slice(0,4);y++)festivos(y).forEach(([d,n])=>{if(d>=E.desde&&d<=end)hs.push(fd(d)+' '+n)});
+el.innerHTML=(hs.length?'Festivos en este periodo (no se cuentan): '+hs.join('; ')+'. ':'No hay festivos en este periodo. ')+(E.hasta!=sug?`Con ${ndias()} días la fecha sugerida es ${fd(sug)}. <button class=lk onclick="S.ent.hastaMan=false;calc()">Usar la sugerida</button>`:'')}
+function chgHasta(v){const E=S.ent;if(!v||v<E.desde){info('Fecha no válida','La fecha final no puede ser anterior al inicio del consumo ('+fd(E.desde)+').');$('f-hasta').value=E.hasta;return}E.hasta=v;E.hastaMan=true;save();fest()}
+function chgFecha(v){S.ent.fecha=v;const o=S.ent.desde;calc();if(o&&S.ent.desde!=o)toast('El consumo pasó al '+fd(S.ent.desde)+' porque debe empezar después de la entrega.')}
+function chgDesde(v){if(S.ent.fecha&&v<=S.ent.fecha){info('Fecha no permitida','El consumo debe empezar después de la fecha de entrega ('+fd(S.ent.fecha)+').');$('f-desde').value=S.ent.desde;return}S.ent.desde=v;S.ent.hastaMan=false;calc()}
+/* ---------- utilidades de interfaz ---------- */
+function ask(t,m,fn,btn,solo){$('dt').textContent=t;$('dm').textContent=m;$('dok').textContent=btn||'Eliminar';$('dok').className=solo?'p':'p danger';$('dcancel').style.display=solo?'none':'';$('dok').onclick=()=>{$('dlg').close();fn()};$('dlg').showModal()}
+const info=(t,m)=>ask(t,m,()=>{},'Entendido',1);
+function toast(m){const t=$('toast');t.textContent=m;t.className='on';clearTimeout(t._t);t._t=setTimeout(()=>t.className='',3200)}
+const inp=(p,v,t,x)=>`<input type="${t||'text'}" ${t=='number'?'step="any" min="0"':''} value="${esc(v)}" oninput="set('${p}',this.value,${t=='number'});${x||''}">`;
+function sumUpd(){const A=act(),T=tots(A);$('sum').innerHTML=`<span>Entrega N° <b>${esc(S.ent.num)}</b></span><span><b>${ndias()}</b> días</span><span><b>${nf(T.cp)}</b> primaria · <b>${nf(T.cs)}</b> secundaria</span>`;
+const st={ent:!!(S.ent.fecha&&ndias()),sed:A.length>0};document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('ok',!!st[b.dataset.k]))}
+/* ---------- 1. Entrega ---------- */
+const FE=[['num','N° de entrega','number'],['oper','Operador / proveedor'],['mun','Municipio'],['sub','Subregión'],['lugar','Lugar de entrega'],['hora','Hora de entrega','time'],['veh','Vehículo / marca'],['placa','Placa']];
+const FH=[['cod','Código'],['ver','Versión'],['fdoc','Fecha del formato']];
+function rEnt(){const E=S.ent;$('t-ent').innerHTML=`<div class=card><h3>Datos de la entrega</h3><div class=g>${FE.map(([k,l,t])=>`<label>${l}${inp('ent.'+k,E[k],t)}</label>`).join('')}</div>
+<details style="margin-top:16px"><summary>Encabezado del acta (código, versión y fecha del formato)</summary><div class=g>${FH.map(([k,l])=>`<label>${l}${inp('ent.'+k,E[k])}</label>`).join('')}</div><p class=n>Si se dejan en blanco, el acta sale con esas casillas vacías.</p></details></div>
+<div class=card><h3>Fechas</h3><div class=g><label>Fecha de entrega<input type=date id=f-fecha value="${E.fecha||''}" onchange="chgFecha(this.value)"></label><label>Consumo desde<input type=date id=f-desde value="${E.desde||''}" onchange="chgDesde(this.value)"></label><label>Consumo hasta (ajustable)<input type=date id=f-hasta value="${E.hasta||''}" onchange="chgHasta(this.value)"></label></div>
+<p id=dnote class=n style="margin-top:12px"></p></div>
+<div class=card><h3>Días y menús de esta entrega</h3><p class=n>Elija el par de semanas y desmarque los días sin clase. Cada día usa su menú del ciclo 2027: semana 1 = menús 1 al 5, semana 2 = 6 al 10, semana 3 = 11 al 15 y semana 4 = 16 al 20. Toque una tarjeta para marcarla o desmarcarla.</p>
+<div class=seg id=semseg></div><div id=dias></div><div class=cnt id=cnt></div></div>`;rDias();calc()}
+function setSem(v){S.ent.sem=+v;const b=+v==3?[2,3]:[0,1];S.sel=S.sel.map((_,i)=>b.includes(Math.floor(i/5)));S.ent.hastaMan=false;save();rDias();calc()}
+function selW(w,v){for(let j=0;j<5;j++)S.sel[w*5+j]=v;S.ent.hastaMan=false;save();rDias();calc()}
+function tgl(i){S.sel[i]=!S.sel[i];S.ent.hastaMan=false;save();rDias();calc()}
+function rDias(){const b=S.ent.sem==3?[2,3]:[0,1];$('semseg').innerHTML=[[1,'Semanas 1 y 2'],[3,'Semanas 3 y 4']].map(([v,t])=>`<button class="${S.ent.sem==v?'on':''}" onclick="setSem(${v})">${t}</button>`).join('');
+$('dias').innerHTML=[0,1,2,3].map(w=>`<div class=wk><div class=wh><b>Semana ${w+1}</b><span class=n>${b.includes(w)?'Parte de esta entrega':'Otra semana (opcional)'} · ${dW(w)} de 5 días</span><span><button class=lk onclick="selW(${w},true)">Marcar todos</button><button class=lk onclick="selW(${w},false)">Quitar todos</button></span></div><div class=wd>`+
+[0,1,2,3,4].map(j=>{const i=w*5+j,on=S.sel[i];return `<button class="day ${on?'on':''}" aria-pressed="${on}" onclick="tgl(${i})" title="${esc(MENUS[i])}"><span class=dn>Día ${j+1} · Menú ${i+1}</span><span class=dm>${esc(MENUS[i])}</span><span class=ck>${on?'✓':''}</span></button>`}).join('')+'</div></div>').join('');
+const W=wkSel();$('cnt').innerHTML=`Días a entregar: ${ndias()}`+(W.length?`<span class="tag g">Semanas ${fmtW(W.map(w=>w+1))}</span>`:'<span class="tag w">Ningún día marcado</span>')}
+/* ---------- 2. Sedes ---------- */
+function rSedes(){$('t-sed').innerHTML=`<div class=stats id=sst></div><div class=card><div class=bar-tools><input type=search id=sq placeholder="Buscar sede o código DANE" oninput="filt()"><button class=s onclick="pOpen()">Pegar cupos desde Excel</button><button class=s onclick="addSede()">+ Agregar sede</button></div>
+<p class=n style="margin-top:0">Escriba los cupos de cada nivel según la matrícula focalizada. <b>Primaria</b> incluye preescolar (prejardín, jardín y transición) y 1° a 5°. <b>Secundaria</b> va de 6° a 11°. Si prefiere, use <b>Por grados</b> para escribir la matrícula de cada grado y la plataforma suma los niveles. Las sedes con 0 cupos no generan acta.</p>
+<div class=tbl><table id=stb><thead><tr><th>Sede educativa<th>Código DANE<th class=num>Primaria<small>Preescolar a 5°</small><th class=num>Secundaria<small>6° a 11°</small><th class=num>Total<th>Matrícula<th></tr></thead><tbody>${S.sedes.map(rowS).join('')}</tbody><tfoot><tr><td colspan=2>TOTAL<td class=num id=ft-p><td class=num id=ft-s><td class=num id=ft-t><td colspan=2></tr></tfoot></table></div></div>`;statS()}
+function rowS(s,i){const ie=isIE(s)&&cS(s)==0&&cP(s)>0;return `<tr data-i=${i} data-q="${esc(nrm(s.n+' '+s.dane))}"><td style="min-width:260px"><input value="${esc(s.n)}" oninput="S.sedes[${i}].n=this.value;save()">${ie?'<span class="tag w" title="Institución educativa sin cupos de secundaria">¿Sin secundaria?</span>':''}<td><input value="${esc(s.dane)}" style="min-width:140px" oninput="S.sedes[${i}].dane=this.value;save()">
+<td class=num><input type=number min=0 step=1 id=cp-${i} value="${cP(s)}" ${s.mg?'disabled':''} oninput="setC(${i},'cp',this.value)"><td class=num><input type=number min=0 step=1 id=cs-${i} value="${cS(s)}" ${s.mg?'disabled':''} oninput="setC(${i},'cs',this.value)"><td class=num><b id=ct-${i}>${nf(cT(s))}</b>
+<td><button class=lk onclick="tgG(${i})">${s.mg?'Usar totales':'Por grados'}</button><td><b class=x title="Eliminar sede" onclick="delS(${i})">×</b></tr>`+
+(s.mg?`<tr class=gr data-i=${i} data-q="${esc(nrm(s.n+' '+s.dane))}"><td colspan=7><div class=grades><span class=lv>Matrícula por grado de ${esc(s.n)||'la sede'}: los cupos de primaria y secundaria se calculan con esta suma.</span>${GR.map((g,k)=>`<label>${g}<input type=number min=0 step=1 value="${num(s.g[k])}" oninput="setG(${i},${k},this.value)" style="${k<NP?'':'border-color:#9db3d9'}"></label>`).join('')}</div></td></tr>`:'')}
+function statS(){const A=act(),T=tots(A);$('sst').innerHTML=`<div><b>${A.length}</b>sedes con cupos</div><div class=pri><b>${nf(T.cp)}</b>cupos primaria</div><div class=sec><b>${nf(T.cs)}</b>cupos secundaria</div><div><b>${nf(T.ct)}</b>cupos en total</div>`;
+const all=tots(S.sedes);if($('ft-p')){$('ft-p').textContent=nf(all.cp);$('ft-s').textContent=nf(all.cs);$('ft-t').textContent=nf(all.ct)}}
+function setC(i,k,v){S.sedes[i][k]=Math.max(0,Math.round(num(v)));save();$('ct-'+i).textContent=nf(cT(S.sedes[i]));statS()}
+function setG(i,k,v){const s=S.sedes[i];s.g[k]=Math.max(0,Math.round(num(v)));save();$('cp-'+i).value=cP(s);$('cs-'+i).value=cS(s);$('ct-'+i).textContent=nf(cT(s));statS()}
+function tgG(i){const s=S.sedes[i];if(s.mg){const p=cP(s),q=cS(s);s.mg=false;if(p+q>0){s.cp=p;s.cs=q}}else{s.mg=true;if(!s.g.some(v=>num(v)>0)){toast('Escriba la matrícula de cada grado. Mientras tanto la sede queda en 0 cupos.')}}save();rSedes();filt()}
+function filt(){const q=nrm($('sq')?$('sq').value:'');document.querySelectorAll('#stb tbody tr').forEach(r=>r.style.display=!q||r.dataset.q.includes(q)?'':'none')}
+function addSede(){S.sedes.push({n:'',dane:'',cp:0,cs:0,mg:false,g:Array(14).fill(0)});save();rSedes();const r=document.querySelectorAll('#stb tbody tr');const l=r[r.length-1];l.scrollIntoView({block:'center'});l.querySelector('input').focus()}
+function delS(i){const s=S.sedes[i];ask('¿Eliminar esta sede?',`Se eliminará "${s.n||'sin nombre'}". Ya no se generará su acta ni aparecerá en la lista del proveedor.`,()=>{S.sedes.splice(i,1);save();rSedes();filt()})}
+/* pegar desde Excel */
+let PP=null;
+function pOpen(){$('pta').value='';$('pres').textContent='';$('papl').disabled=true;PP=null;$('dp').showModal();$('pta').focus()}
+function pPrev(){const L=$('pta').value.split(/\r?\n/).map(l=>l.split(/\t|;/).map(x=>x.trim())).filter(r=>r.length>=3&&r[0]);const ok=[],nf_=[],bad=[];
+L.forEach(r=>{const vals=r.slice(1).map(x=>x.replace(/\./g,'').replace(',','.'));if(!vals.slice(0,2).every(v=>v===''||isFinite(+v))){bad.push(r[0]);return}
+const k=nrm(r[0]);let i=S.sedes.findIndex(s=>nrm(s.dane)==k&&k);if(i<0)i=S.sedes.findIndex(s=>nrm(s.n)==k);if(i<0)i=S.sedes.findIndex(s=>k.length>5&&(nrm(s.n).includes(k)||k.includes(nrm(s.n))&&nrm(s.n).length>5));
+const g=vals.length>=14?vals.slice(0,14).map(v=>Math.round(num(v))):null;const rec={i,key:r[0],cp:g?0:Math.round(num(vals[0])),cs:g?0:Math.round(num(vals[1])),g};(i>=0?ok:nf_).push(rec)});
+PP={ok,nf:nf_};const add=$('padd').checked;$('pres').innerHTML=`<b>${ok.length}</b> sedes encontradas para actualizar.`+(nf_.length?` <b>${nf_.length}</b> no encontradas${add?' (se agregarán como nuevas)':''}: ${nf_.slice(0,6).map(x=>esc(x.key)).join(', ')}${nf_.length>6?'…':''}.`:'')+(bad.length?` Se omitieron ${bad.length} filas sin números (por ejemplo, encabezados).`:'');
+$('papl').disabled=!(ok.length||(add&&nf_.length))}
+function pApply(){if(!PP)return;const add=$('padd').checked,ap=(s,x)=>{if(x.g){s.mg=true;s.g=x.g}else{s.mg=false;s.cp=x.cp;s.cs=x.cs}};PP.ok.forEach(x=>ap(S.sedes[x.i],x));
+if(add)PP.nf.forEach(x=>{const s={n:/^\d+$/.test(x.key)?'':x.key,dane:/^\d+$/.test(x.key)?x.key:'',cp:0,cs:0,mg:false,g:Array(14).fill(0)};ap(s,x);S.sedes.push(s)});
+save();$('dp').close();rSedes();toast('Cupos actualizados: '+(PP.ok.length+(add?PP.nf.length:0))+' sedes.')}
+/* ---------- configuración: productos ---------- */
+function rProds(){$('t-pro').innerHTML=`<div class=card><div class=bar-tools><input type=search id=pq placeholder="Buscar producto" oninput="filtP()"><button class=s onclick="addProd()">+ Agregar producto</button><span class=n>${S.prods.filter(p=>p.pc).length} con empaque por confirmar</span></div>
+<p class=n style="margin-top:0"><b>Unidad / empaque</b> es el texto que sale en el acta (por ejemplo, Bolsa/500gr). <b>Gramos por empaque</b> es lo que pesa cada unidad; use 1 si se entrega a granel en gramos y la plataforma lo muestra en kg. <b>★ Proveedor</b> marca los productos que salen en la lista por sede del proveedor. La etiqueta <span class="tag w" style="margin:0">Por confirmar</span> desaparece al editar el empaque o al pulsar Confirmar.</p>
+<div class=tbl><table id=ptb><thead><tr><th>Producto<th>Unidad / empaque<th class=num>Gramos por empaque<th style="text-align:center">★ Proveedor<th>Estado<th></tr></thead><tbody>${S.prods.map((p,i)=>`<tr data-q="${esc(nrm(p.n))}"><td style="min-width:260px"><input value="${esc(p.n)}" oninput="S.prods[${i}].n=this.value;save()"><td><input value="${esc(p.u)}" style="min-width:150px" oninput="S.prods[${i}].u=this.value;cnf(${i})"><td class=num><input type=number step=any min=0 value="${p.e}" oninput="S.prods[${i}].e=num(this.value)||1;cnf(${i})"><td style="text-align:center"><input type=checkbox style="width:auto" ${p.d?'checked':''} onchange="S.prods[${i}].d=this.checked;save()"><td id=pc-${i}>${p.pc?`<span class="tag w" style="margin:0">Por confirmar</span> <button class=lk onclick="cnf(${i})">Confirmar</button>`:'<span class="tag g" style="margin:0">OK</span>'}<td><b class=x title="Eliminar" onclick="delP(${i})">×</b></tr>`).join('')}</tbody></table></div></div>`}
+function cnf(i){S.prods[i].pc=false;save();const c=$('pc-'+i);if(c)c.innerHTML='<span class="tag g" style="margin:0">OK</span>'}
+function filtP(){const q=nrm($('pq').value);document.querySelectorAll('#ptb tbody tr').forEach(r=>r.style.display=!q||r.dataset.q.includes(q)?'':'none')}
+function addProd(){S.prods.push({id:'p'+Date.now(),n:'NUEVO PRODUCTO',u:'1 gr',e:1,d:false,pc:true,gp:Array(20).fill(0),gs:Array(20).fill(0)});save();rProds();rGr();toast('Producto agregado al final. Escriba sus gramos en "Gramajes por menú".')}
+function delP(i){const p=S.prods[i];ask('¿Eliminar este producto?',`Se eliminará "${p.n}" con sus gramajes de primaria y secundaria. Dejará de aparecer en las actas y en el pedido.`,()=>{S.prods.splice(i,1);save();rProds();rGr()})}
+/* ---------- configuración: gramajes ---------- */
+let GL='gp';
+function rGr(){const I=new Set(SELI());$('t-gr').innerHTML=`<div class=card><div class=bar-tools><div class=seg><button class="${GL=='gp'?'on':''}" onclick="GL='gp';rGr()">Primaria (preescolar a 5°)</button><button class="${GL=='gs'?'on':''}" onclick="GL='gs';rGr()">Secundaria (6° a 11°)</button></div><span class=n>Peso bruto en gramos por cupo, según el ciclo de menús 2027. Las columnas resaltadas son los días marcados en esta entrega. Pase el cursor sobre M1…M20 para ver el menú.</span></div>
+<div class=tbl><table id=gr><thead><tr><th>Producto${Array.from({length:20},(_,j)=>`<th class="${I.has(j)?'sel':''}" title="Menú ${j+1}: ${esc(MENUS[j])}">M${j+1}`).join('')}</tr></thead><tbody>${S.prods.map((p,i)=>`<tr><td title="${esc(p.u)}">${esc(p.n)}`+p[GL].map((v,j)=>`<td class="${num(v)?'':'z'} ${I.has(j)?'sel':''}"><input type=number step=any min=0 value="${num(v)}" oninput="S.prods[${i}].${GL}[${j}]=num(this.value);this.parentNode.classList.toggle('z',!num(this.value));save()">`).join('')).join('')}</tbody></table></div></div>`}
+/* ---------- 3. Revisar y generar ---------- */
+function checks(){const E=S.ent,A=act(),L=[];const it=(t,m,s)=>L.push({t,m,s});
+ndias()?it('ok',`${ndias()} días de entrega`,`Menús ${SELI().map(i=>i+1).join(', ')}`):it('er','No hay días marcados','Marque los días en el paso 1.');
+A.length?it('ok',`${A.length} sedes con cupos`,`${nf(tots(A).cp)} de primaria y ${nf(tots(A).cs)} de secundaria`):it('er','Ninguna sede tiene cupos','Escriba los cupos en el paso 2.');
+E.fecha?it('ok','Fecha de entrega: '+fd(E.fecha),`Consumo del ${fd(E.desde)} al ${fd(E.hasta)}`):it('wa','Falta la fecha de entrega','El acta saldría sin fecha de entrega ni fechas de consumo.');
+if(!E.oper)it('wa','Falta el operador / proveedor','Aparece en el encabezado del acta.');
+const ie=A.filter(s=>isIE(s)&&cS(s)==0);if(ie.length)it('wa','Instituciones sin cupos de secundaria',ie.map(s=>s.n).join('; ')+'. Si tienen bachillerato, reparta sus cupos.');
+const pc=used().filter(p=>p.pc);if(pc.length)it('wa',`${pc.length} productos con empaque por confirmar`,pc.map(p=>p.n).join(', ')+'. Revíselos en "Productos y empaques".');
+return L}
+function rGen(){const L=checks(),A=act(),T=tots(A),P=provider(),C=consol(),kg=C.reduce((a,c)=>a+c.kg,0),blk=L.some(x=>x.t=='er');
+$('t-gen').innerHTML=`<div class=stats><div><b>${A.length}</b>sedes</div><div class=pri><b>${nf(T.cp)}</b>cupos primaria</div><div class=sec><b>${nf(T.cs)}</b>cupos secundaria</div><div><b>${ndias()}</b>días</div><div><b>${nf(kg)}</b>kg aprox.</div></div>
+<div class=card><h3>Revisión antes de generar</h3><ul class=chk>${L.map(x=>`<li class=${x.t}><i>${x.t=='ok'?'✓':x.t=='wa'?'!':'✕'}</i><div>${esc(x.m)}<small>${esc(x.s||'')}</small></div></li>`).join('')}</ul></div>
+<div class=card><h3>Descargar</h3><div class=gen>
+<button class=p ${blk?'disabled':''} onclick="pdfAll()">Todas las actas (PDF)<small>Un archivo con ${A.length} actas</small></button>
+<button class=p ${blk?'disabled':''} onclick="zipAll()">Un PDF por sede (ZIP)<small>Incluye la lista del proveedor</small></button>
+<button class=p ${blk?'disabled':''} onclick="pv()">Lista del proveedor y pedido (PDF)<small>Productos ★ por sede y consolidado</small></button>
+<button class=s ${blk?'disabled':''} onclick="csv()">Pedido para Excel (.csv)</button></div>
+<div class=prog id=prog><i></i></div><p id=msg></p></div>
+<div class=card><h3>Vista previa del acta</h3><div class=acts><select id=pvs style="max-width:420px">${A.map(s=>`<option value=${S.sedes.indexOf(s)}>${esc(s.n)} · ${nf(cP(s))} P / ${nf(cS(s))} S</option>`).join('')}</select><button class=s ${blk?'disabled':''} onclick="prev()">Ver acta</button><button class=s ${blk?'disabled':''} onclick="prevProv()">Ver lista del proveedor</button></div><iframe id=pvf hidden title="Vista previa"></iframe></div>
+<div class=card><h3>Lista del proveedor</h3><p class=n>Productos marcados con ★ en "Productos y empaques". Los productos a granel se muestran en kg.</p><div class=tbl><table><thead><tr><th>Sede<th class=num>Prim.<th class=num>Sec.<th class=num>Total${P.C.map(p=>`<th class=num>${esc(p.n)}<small>${p.e==1?'kg':esc(p.u)}</small>`).join('')}</tr></thead><tbody>${P.A.map((s,i)=>`<tr><td>${esc(s.n)}<td class=num>${nf(cP(s))}<td class=num>${nf(cS(s))}<td class=num>${nf(cT(s))}${P.rows[i].map((q,j)=>`<td class=num>${fqu(P.C[j],q)}`).join('')}`).join('')}<tr class=tot><td>TOTAL<td class=num>${nf(P.cp)}<td class=num>${nf(P.cs)}<td class=num>${nf(P.ct)}${P.tot.map((q,j)=>`<td class=num>${fqu(P.C[j],q)}`).join('')}</tr></tbody></table></div></div>
+<div class=card><h3>Pedido consolidado</h3><p class=n>Total de cada producto para todas las sedes. Cada sede se redondea hacia arriba a empaques completos antes de sumar.</p><div class=tbl><table><thead><tr><th>Producto<th>Unidad / empaque<th class=num>kg primaria<th class=num>kg secundaria<th class=num>Cantidad total<th class=num>Peso total (kg)</tr></thead><tbody>${C.map(c=>`<tr><td>${esc(c.p.n)}${c.p.pc?'<span class="tag w">Por confirmar</span>':''}<td>${c.p.e==1?'kg':esc(c.p.u)}<td class=num>${nf(c.kgp,1)}<td class=num>${nf(c.kgs,1)}<td class=num><b>${c.p.e==1?nf(c.q/1000,2)+' kg':nf(c.q)}</b><td class=num>${nf(c.kg,1)}`).join('')}</tbody></table></div></div>
+<div class=card><h3>Copia de seguridad</h3><p class=n>Guarde todos sus datos (entrega, sedes, cupos, productos, gramajes e historial) en un archivo para respaldarlos o llevarlos a otro computador.</p><div class=acts><button class=s onclick="expo()">Guardar copia (.json)</button><label class=s style="display:inline-flex;flex-direction:row;color:var(--ink);font-size:15px;font-weight:400">Cargar copia<input type=file accept=.json onchange="impo(this.files[0])" hidden></label><button class="s dng" onclick="reset()">Restaurar datos originales</button></div></div>`}
+/* ---------- historial ---------- */
+function rec(){const E=S.ent,A=act(),T=tots(A),k=E.num+'|'+E.desde;const kg=consol().map(c=>({n:c.p.n,kg:+c.kg.toFixed(1)})).filter(x=>x.kg>0).sort((a,b)=>b.kg-a.kg);
+const r={id:Date.now(),key:k,at:new Date().toISOString(),num:E.num,sems:wkSel().map(w=>w+1),desde:E.desde,hasta:E.hasta,dias:ndias(),sedes:A.length,cupos:T.ct,cp:T.cp,cs:T.cs,label:'',kg};const i=H.findIndex(x=>x.key==k);if(i>=0){r.id=H[i].id;r.label=H[i].label;H[i]=r}else H.unshift(r);saveH()}
+let HF='';const pal=['#1c6b4b','#1f4e9c','#c8202f','#b8860b','#6a4c93','#00838f'];
+const lab=(id,v)=>{H.find(x=>x.id==id).label=v;saveH()};
+const delH=id=>ask('¿Eliminar del historial?','Se borrará el registro de esta entrega. Las actas ya descargadas no se afectan.',()=>{H=H.filter(x=>x.id!=id);saveH();rHis()});
+function rHis(){const L=[...new Set(H.map(x=>x.label).filter(Boolean))],list=H.filter(x=>!HF||x.label==HF),kT=x=>(x.kg||[]).reduce((a,y)=>a+y.kg,0),mx=Math.max(1,...list.map(kT)),col=l=>pal[Math.max(0,L.indexOf(l))%pal.length];
+const bars=(a,m,c)=>a.map(x=>`<div class=bar><span title="${esc(x.n)}">${esc(x.n)}</span><div><i style="width:${(x.v/m*100).toFixed(1)}%;background:${x.c||c}"></i></div><b>${nf(x.v)} kg</b></div>`).join('');
+$('t-his').innerHTML=!H.length?'<div class="card empty"><b>Aún no hay entregas registradas</b>Cuando descargue las actas (PDF o ZIP), la entrega quedará guardada aquí con su resumen.</div>':
+`<div class=card><label style="max-width:300px">Filtrar por contrato<select onchange="HF=this.value;rHis()"><option value="">Todos los contratos</option>${L.map(l=>`<option ${l==HF?'selected':''}>${esc(l)}</option>`).join('')}</select></label>
+<h3>Peso total por entrega</h3><p class=n>Kilos aproximados de víveres de cada entrega. El color indica el contrato.</p>${bars(list.slice().reverse().map(x=>({n:'N° '+x.num+' · '+fd(x.desde),v:kT(x),c:x.label?col(x.label):'#9aa8ae'})),mx)}
+<p class=n>${L.map(l=>`<span style="color:${col(l)}">●</span> ${esc(l)}`).join(' &nbsp; ')}</p><datalist id=dl-lab>${L.map(l=>`<option value="${esc(l)}">`).join('')}</datalist></div>`+
+list.map(x=>`<div class=hcard><div class=hh><div><b>Entrega N° ${esc(x.num)}</b> · Semanas ${x.sems?fmtW(x.sems):(x.sem==3?'3 y 4':'1 y 2')}<div class=n>Consumo del ${fd(x.desde)} al ${fd(x.hasta)}. Generada el ${new Date(x.at).toLocaleDateString('es-CO')}.</div></div><label>Etiqueta de contrato<input list=dl-lab value="${esc(x.label)}" placeholder="Ej. Contrato 045 de 2027" oninput="lab(${x.id},this.value)" onchange="rHis()"></label></div>
+<div class=stats><div><b>${x.sedes}</b>sedes</div>${x.cp!=null?`<div class=pri><b>${nf(x.cp)}</b>primaria</div><div class=sec><b>${nf(x.cs)}</b>secundaria</div>`:`<div><b>${nf(x.cupos)}</b>cupos</div>`}<div><b>${x.dias}</b>días</div><div><b>${nf(kT(x))}</b>kg aprox.</div></div>
+<div class=n>Los 8 productos de mayor peso</div>${bars((x.kg||[]).slice(0,8).map(y=>({n:y.n,v:y.kg})),x.kg&&x.kg[0]?x.kg[0].kg:1,'#1c6b4b')}<button class="s dng" style="margin-top:10px" onclick="delH(${x.id})">Eliminar del historial</button></div>`).join('')}
+/* ---------- navegación ---------- */
+const PD={ent:['Entrega y días','Complete los datos de la entrega, la fecha y los días con clase. Cada día marcado suma su menú del ciclo 2027.'],sed:['Sedes y cupos','Ajuste los cupos de primaria y secundaria de cada sede según la matrícula. Cada nivel usa su propia minuta.'],gen:['Revisar y generar','Revise el resumen, mire la vista previa y descargue las actas, la lista del proveedor y el pedido.'],his:['Historial de entregas','Cada entrega que descarga queda registrada. Etiquétela con su contrato para consultarlas por grupo.'],pro:['Productos y empaques','Configuración que casi no cambia: modifíquela cuando cambie un producto o su presentación.'],gr:['Gramajes por menú','Configuración que casi no cambia: viene del ciclo de menús 2027 (peso bruto). Modifíquela solo si cambia la minuta.']};
+const T=[['ent','Entrega y días',0],['sed','Sedes y cupos',0],['gen','Revisar y generar',0],['his','Historial',2],['pro','Productos y empaques',1],['gr','Gramajes por menú',1]],GN={0:'Cada entrega',2:'Seguimiento',1:'Configuración'};
+let CUR='ent';
+function tab(k){CUR=k;T.forEach(([t])=>{$('t-'+t).style.display=t==k?'block':'none'});document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.k==k));$('pt').textContent=PD[k][0];$('pd').textContent=PD[k][1];$('ph').className=T.find(t=>t[0]==k)[2]==1?'ph adv':'ph';
+if(k=='ent')rEnt();if(k=='sed')rSedes();if(k=='gen')rGen();if(k=='his')rHis();if(k=='gr')rGr();if(k=='pro')rProds();
+const st=['ent','sed','gen'],i=st.indexOf(k);$('foot').innerHTML=i<0?'':(i>0?`<button class=s onclick="tab('${st[i-1]}')">← ${T[i-1][1]}</button>`:'<span></span>')+(i<2?`<button class=p onclick="tab('${st[i+1]}')">Siguiente: ${T[i+1][1]} →</button>`:'');scrollTo(0,0)}
+function init(){let h='',g=-1;T.forEach(([k,l,a],i)=>{if(a!=g){h+=`<h4>${GN[a]}</h4>`;g=a}h+=`<button data-k="${k}" class="${a==1?'adv':''}" onclick="tab('${k}')">${a==0?`<i>${i+1}</i>`:''}${l}</button>`});$('nav').innerHTML=h;
+$('logos').innerHTML=['men','pae','gob','esc'].map(k=>`<img src="${LOGOS[k]}" alt="">`).join('');tab('ent');sumUpd()}
+/* ---------- copias ---------- */
+const dl=(b,n)=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),8e3)};
+const expo=()=>dl(new Blob([JSON.stringify({v:27,S,H},null,1)],{type:'application/json'}),'copia_pae_2027.json');
+function impo(f){if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(j.S&&j.S.v==27){S=fixS(j.S);H=j.H||H}else if(j.S){S=fixS(fromOld(j.S));H=j.H||H;toast('Copia de la versión anterior: se trajeron la entrega y las sedes. Revise los cupos de secundaria.')}else if(j.ent)S=fixS(j.v==27?j:fromOld(j));else throw 0;save();saveH();init()}catch(e){info('Archivo no válido','Elija una copia guardada desde este aplicativo (.json).')}};r.readAsText(f)}
+function reset(){ask('¿Restaurar los datos originales?','Se perderán sus cambios en entrega, sedes, cupos, productos y gramajes. El historial se conserva.',()=>{S=fixS(clone(DEF));save();init()},'Restaurar')}
+/* ---------- PDF (pdf-lib, carta) ---------- */
+const MM=72/25.4,PH=279.4;
+const WA=new Set('€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ'.split(''));
+const safe=s=>String(s==null?'':s).replace(/[\r\n\t]+/g,' ').replace(/[^\x20-\x7e\u00a0-\u00ff]/g,c=>WA.has(c)?c:c=='★'?'*':'');
+const gy=v=>PDFLib.rgb(v/255,v/255,v/255);
+async function newDoc(){const P=PDFLib,pdf=await P.PDFDocument.create();pdf.setTitle('Actas de víveres PAE');pdf.setCreator('Actas de víveres PAE 2027');const D={pdf,F:await pdf.embedFont(P.StandardFonts.Helvetica),B:await pdf.embedFont(P.StandardFonts.HelveticaBold),I:{},foot:''};for(const k of Object.keys(LOGOS))D.I[k]=await pdf.embedPng(LOGOS[k]);return D}
+function page(D){D.pg=D.pdf.addPage([612,792]);if(D.foot)txt(D,D.foot,107.95,274.5,{fs:6,a:'c',c:120});return 10}
+function rect(D,x,y,w,h,f){D.pg.drawRectangle({x:x*MM,y:(PH-y-h)*MM,width:w*MM,height:h*MM,borderColor:gy(0),borderWidth:.5,color:f!=null?gy(f):undefined})}
+function txt(D,s,x,y,o){o=o||{};s=safe(s);if(!s)return;const f=o.b?D.B:D.F,z=o.fs||7,w=f.widthOfTextAtSize(s,z)/MM,X=o.a=='c'?x-w/2:o.a=='r'?x-w:x;D.pg.drawText(s,{x:X*MM,y:(PH-y)*MM,size:z,font:f,color:gy(o.c||0)})}
+function wrap(D,s,mw,z,b){const f=b?D.B:D.F,W=t=>f.widthOfTextAtSize(t,z)/MM,out=[];String(s==null?'':s).split('\n').forEach(par=>{let line='';safe(par).split(' ').forEach(w=>{const t=line?line+' '+w:w;if(W(t)<=mw||!line)line=t;else{out.push(line);line=w}});out.push(line)});return out}
+function bx(D,x,y,w,h,t,o){o=o||{};rect(D,x,y,w,h,o.f);if(t===''||t==null)return;let z=o.fs||D.dfs||7,ls=wrap(D,String(t),w-1.6,z,o.b);while(!o.t&&z>4.6&&(ls.length*z*.41>h-.5||ls.some(l=>(o.b?D.B:D.F).widthOfTextAtSize(l,z)/MM>w-1.2))){z-=.3;ls=wrap(D,String(t),w-1.6,z,o.b)}
+const lh=z*.41,ty=o.t?y+z*.4+.6:y+h/2+z*.125-(ls.length-1)*lh/2;ls.forEach((l,i)=>txt(D,l,o.a=='c'?x+w/2:o.a=='r'?x+w-.9:x+.9,ty+i*lh,{b:o.b,fs:z,a:o.a,c:o.c}))}
+function img(D,k,x,y,h){const I=D.I[k],w=h*I.width/I.height;D.pg.drawImage(I,{x:x*MM,y:(PH-y-h)*MM,width:w*MM,height:h*MM});return w}
+function acta(D,s){const E=S.ent,L=10,W=195.9,H=3.4,cp=cP(s),cs=cS(s),ct=cp+cs,Wk=wkSel();D.foot=`Acta de entrega de víveres · Entrega N° ${E.num} · ${s.n}`;let y=page(D);D.dfs=6.2;
+const R=(y,h,ws,cl)=>{let x=L;ws.forEach((w,i)=>{const c=cl[i];bx(D,x,y,w,h,Array.isArray(c)?c[0]:c,Array.isArray(c)?c[1]:{});x+=w});return y+h};
+const B=(y,t)=>{bx(D,L,y,W,H,t,{b:1,f:217,a:'c',fs:6.4});return y+H};
+rect(D,L,y,118,14);let x=L+3;[['men',8],['pae',10],['gob',8.5],['esc',10]].forEach(([k,h])=>{x+=img(D,k,x,y+(14-h)/2,h)+3});
+rect(D,L+118,y,44,14);txt(D,'ACTA DE ENTREGA',L+140,y+6,{b:1,fs:8,a:'c'});txt(D,'DE VÍVERES PAE',L+140,y+9.6,{b:1,fs:8,a:'c'});
+[['Código',E.cod],['Versión',E.ver],['Fecha',E.fdoc]].forEach((r,i)=>{bx(D,L+162,y+i*14/3,12,14/3,r[0],{fs:5.8});bx(D,L+174,y+i*14/3,21.9,14/3,r[1],{fs:5.8})});y+=14;
+y=B(y,'Datos generales de la entrega');const w4=[40,80,35,40.9];
+y=R(y,H,w4,['Operador',E.oper,'N° de entrega',[E.num,{b:1,a:'c'}]]);y=R(y,H,w4,['Municipio',E.mun,'Subregión',E.sub]);
+y=R(y,H,w4,['Establecimiento educativo',[s.n,{b:1}],'Código DANE',s.dane]);y=R(y,H,w4,['Lugar de entrega',E.lugar,'Vehículo / Placa',[E.veh,E.placa].filter(Boolean).join(' / ')]);y=R(y,H,w4,['Fecha de entrega',fd(E.fecha),'Hora de entrega',E.hora]);
+bx(D,L,y,47,3*H,'Programación de entrega');bx(D,L+47,y,60,H,'Fechas de consumo',{b:1,f:217,a:'c'});bx(D,L+107,y,54,H,'Número de cupos (raciones)',{b:1,f:217,a:'c',fs:5.8});bx(D,L+161,y,34.9,H,'Días de consumo',{b:1,f:217,a:'c',fs:5.8});
+bx(D,L+47,y+H,30,H,'Desde',{a:'c'});bx(D,L+77,y+H,30,H,'Hasta',{a:'c'});bx(D,L+47,y+2*H,30,H,fd(E.desde),{a:'c'});bx(D,L+77,y+2*H,30,H,fd(E.hasta),{a:'c'});
+[['Primaria',cp],['Secundaria',cs],['Total',ct]].forEach(([t,v],i)=>{bx(D,L+107+i*18,y+H,18,H,t,{a:'c',fs:5.8});bx(D,L+107+i*18,y+2*H,18,H,nf(v),{a:'c',b:i==2})});
+bx(D,L+161,y+H,34.9,2*H,ndias(),{a:'c'});y+=3*H;
+y=B(y,'Certificación de recibido · Criterio de calidad');const g={c:150,a:'c'},k={a:'c'};
+y=R(y,H,[36,12,36,12,36,12,36,15.9],[['Excelente',k],['4',g],['Buena',k],['3',g],['Regular',k],['2',g],['Mala',k],['1',g]]);
+y=R(y,H,[48,14,32,14,32,55.9],['Recibí cantidad conforme',['1',g],['SI',k],['2',g],['NO',k],['En caso de responder negativamente complete:',{c:150,fs:5.5}]]);
+y=R(y,4.6,[48,74,34,39.9],['Alimentos devueltos / rechazados','','Alimentos faltantes','']);
+y=B(y,'Detalle de víveres faltantes o devueltos / rechazados');const w3=[47,37,36,75.9];y=R(y,H,w3,['Nombre','Unidad de medida','Cantidad','Observaciones'].map(t=>[t,{b:1,a:'c'}]));for(let i=0;i<3;i++)y=R(y,H,w3,['','','','']);
+y=B(y,'Relación de víveres con unidad de medida y cantidad a entregar');
+const grp=Wk.length<=2?Wk.map(w=>({t:`Semana ${w+1} · ${dW(w)} ${dW(w)==1?'día':'días'}`,I:wIdx(w)})):[{t:`Semanas ${fmtW(Wk.map(w=>w+1))} · ${ndias()} días`,I:SELI()}];
+const wP=52,wU=22,wR=15,wQ=16.9,gw=(W-wP-wU-wR-wQ)/grp.length/3,ws=[wP,...grp.flatMap(()=>[gw,gw,gw]),wU,wR,wQ],hH=2.6;
+const head=yy=>{bx(D,L,yy,wP,3*hH,'Listado de víveres',{b:1,a:'c'});grp.forEach((G,k)=>{const x0=L+wP+k*3*gw;bx(D,x0,yy,3*gw,hH,G.t,{b:1,a:'c',fs:5.6,f:235});[['g por cupo','Primaria'],['g por cupo','Secundaria'],['Gramos','total sede']].forEach((t,j)=>bx(D,x0+j*gw,yy+hH,gw,2*hH,t.join('\n'),{b:1,a:'c',fs:5}))});
+const xr=L+wP+grp.length*3*gw;bx(D,xr,yy,wU,3*hH,'Unidad de medida o empaque',{b:1,a:'c',fs:5.4});bx(D,xr+wU,yy,wR,3*hH,'Cantidad sin redondear',{b:1,a:'c',fs:5.4});bx(D,xr+wU+wR,yy,wQ,3*hH,'Cantidad entregada',{b:1,a:'c',fs:5.4});return yy+3*hH};
+y=head(y);
+const rows=used().map(p=>{const v=grp.map(G=>[gsum(p.gp,G.I),gsum(p.gs,G.I)]);return{p,v,tt:v.reduce((a,[a1,b1])=>a+a1*cp+b1*cs,0)}}).filter(r=>r.tt>0);
+const OBS=7,FIR=8,FL=3.2,BOT=OBS+FIR+4*FL,LIM=271.5,rh=Math.max(2,Math.min(3.6,(LIM-BOT-y)/Math.max(rows.length,1))),z=Math.max(4.2,Math.min(6.3,(rh-.35)/.41)),c6={a:'c',fs:z};
+rows.forEach(({p,v,tt})=>{if(y+rh>LIM-(rows.length?0:BOT)){D.dfs=null;y=page(D);D.dfs=6.2;y=head(y)}const r=tt/(p.e||1);
+y=R(y,rh,ws,[[p.n,{fs:z}],...v.flatMap(([a,b])=>[[a?f2(a):'–',c6],[b?f2(b):'–',c6],[f2(a*cp+b*cs),c6]]),...(p.e==1?[['kg',c6],[nf(r/1000,2),c6],[nf(Math.ceil(r-1e-9)/1000,2),{a:'c',fs:z,b:1}]]:[[p.u,c6],[f2(r),c6],[nf(Math.ceil(r-1e-9)),{a:'c',fs:z,b:1}]])])});
+if(y+BOT>LIM+.01)y=page(D);bx(D,L,y,W,OBS,'Observaciones',{t:1,fs:6});y+=OBS;
+[0,1].forEach(i=>{const x=L+i*W/2;bx(D,x,y,W/2,FIR,'FIRMA',{t:1,fs:6});['NOMBRE','CARGO','NÚMERO DE CÉDULA'].forEach((t,j)=>bx(D,x,y+FIR+j*FL,W/2,FL,t,{fs:5.8}));bx(D,x,y+FIR+3*FL,W/2,FL,i?'Entrega:   Municipio ____    Operador ____':'Recibe: establecimiento educativo',{fs:5.8})});D.dfs=null}
+function ph(D,t1,t2){page(D);let x=10;['men','gob','esc'].forEach(k=>{x+=img(D,k,x,8,11)+4});const I=D.I.pae,w=13*I.width/I.height;img(D,'pae',205.9-w,7,13);
+D.pg.drawLine({start:{x:10*MM,y:(PH-22)*MM},end:{x:205.9*MM,y:(PH-22)*MM},thickness:1,color:gy(0)});txt(D,t1,107.95,27.5,{b:1,fs:11,a:'c'});const ls=wrap(D,t2,190,8);ls.forEach((l,i)=>txt(D,l,107.95,32+i*3.4,{fs:8,a:'c'}));return 32+ls.length*3.4}
+function table(D,y,w,head,rows,o){const fs=o.fs||7,h=o.h||4.6,hf=o.hfs||6.3;const dh=()=>{const hh=Math.max(h,...head.map((t,i)=>wrap(D,t,w[i]-1.6,hf,1).length*hf*.41+1.6));let x=10;head.forEach((t,i)=>{bx(D,x,y,w[i],hh,t,{b:1,f:225,a:'c',fs:hf});x+=w[i]});y+=hh};
+dh();rows.forEach((r,ri)=>{if(y+h>266){y=o.pg();dh()}let x=10;const last=o.bl&&ri==rows.length-1;r.forEach((t,i)=>{bx(D,x,y,w[i],h,t,{a:(o.al||[])[i]||'l',fs,b:last,f:last?235:(ri%2?246:null)});x+=w[i]});y+=h});return y}
+async function provPdf(D){D=D||await newDoc();const E=S.ent,P=provider(),sub=`Consumo del ${fd(E.desde)} al ${fd(E.hasta)} · ${ndias()} días (menús ${SELI().map(i=>i+1).join(', ')}) · Operador: ${E.oper||'—'}`;
+D.foot='Lista del proveedor y pedido · Entrega N° '+E.num;const pg=()=>ph(D,'LISTA PARA EL PROVEEDOR – ENTREGA N° '+E.num,sub);let y=pg()+1;
+const n=P.C.length,cw=(195.9-62-36)/Math.max(n,1);const rows=P.A.map((s,i)=>[s.n,nf(cP(s)),nf(cS(s)),nf(cT(s)),...P.rows[i].map((q,j)=>fqu(P.C[j],q))]);rows.push(['TOTAL',nf(P.cp),nf(P.cs),nf(P.ct),...P.tot.map((q,j)=>fqu(P.C[j],q))]);
+table(D,y,[62,12,12,12,...P.C.map(()=>cw)],['Sede','Cupos prim.','Cupos sec.','Total cupos',...P.C.map(p=>p.n+' ('+(p.e==1?'kg':p.u)+')')],rows,{al:['l','r','r','r',...P.C.map(()=>'r')],bl:1,fs:6.8,pg:()=>pg()+1});
+const pg2=()=>ph(D,'PEDIDO CONSOLIDADO DE VÍVERES – ENTREGA N° '+E.num,sub)+1;y=pg2();const C=consol();
+table(D,y,[66,34,22,22,26,25.9],['Producto','Unidad de medida o empaque','kg primaria','kg secundaria','Cantidad total','Peso total aprox. (kg)'],C.map(c=>[c.p.n,c.p.e==1?'kg':c.p.u,nf(c.kgp,1),nf(c.kgs,1),c.p.e==1?nf(c.q/1000,2)+' kg':nf(c.q),nf(c.kg,1)]),{al:['l','l','r','r','r','r'],fs:6.8,pg:pg2});return D}
+/* ---------- ZIP (sin compresión) ---------- */
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=u=>{let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRC[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+function mkZip(files){const en=new TextEncoder(),d=new Date(),tm=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),dt=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate(),parts=[],cd=[];let off=0,cds=0;
+files.forEach(f=>{const nm=en.encode(f.name),c=crc32(f.data),z=f.data.length,h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);h.setUint32(14,c,true);h.setUint32(18,z,true);h.setUint32(22,z,true);h.setUint16(26,nm.length,true);h.setUint16(28,0,true);parts.push(new Uint8Array(h.buffer),nm,f.data);
+const e=new DataView(new ArrayBuffer(46));e.setUint32(0,0x02014b50,true);e.setUint16(4,20,true);e.setUint16(6,20,true);e.setUint16(8,0x0800,true);e.setUint16(10,0,true);e.setUint16(12,tm,true);e.setUint16(14,dt,true);e.setUint32(16,c,true);e.setUint32(20,z,true);e.setUint32(24,z,true);e.setUint16(28,nm.length,true);e.setUint32(42,off,true);cd.push(new Uint8Array(e.buffer),nm);cds+=46+nm.length;off+=30+nm.length+z});
+const E=new DataView(new ArrayBuffer(22));E.setUint32(0,0x06054b50,true);E.setUint16(8,files.length,true);E.setUint16(10,files.length,true);E.setUint32(12,cds,true);E.setUint32(16,off,true);return new Blob([...parts,...cd,new Uint8Array(E.buffer)],{type:'application/zip'})}
+/* ---------- acciones de descarga ---------- */
+const tick=()=>new Promise(r=>setTimeout(r,0));
+let BUSY=0;
+function busy(on,m,p){if(on!=BUSY){document.querySelectorAll('#t-gen button').forEach(b=>{if(on){b.dataset.d=b.disabled;b.disabled=true}else b.disabled=b.dataset.d=='true'});BUSY=on}const g=$('prog');if(g){g.style.display=on?'block':'none';g.firstChild.style.width=(p||0)+'%'}if($('msg'))$('msg').textContent=m||''}
+function pre(){if(!ndias()){info('Sin días seleccionados','Marque al menos un día en el paso 1.');return false}if(!act().length){info('Sin sedes con cupos','Escriba los cupos en el paso 2.');return false}return true}
+const fail=e=>{console.error(e);busy(0);info('No se pudo generar','Ocurrió un error: '+(e&&e.message||e))};
+const fname=s=>s.replace(/[\\/:*?"<>|]/g,'').replace(/\s+/g,' ').trim();
+async function pdfAll(){if(!pre())return;try{const A=act();busy(1,'Generando actas…',2);await tick();const D=await newDoc();for(let i=0;i<A.length;i++){acta(D,A[i]);if(i%4==3){busy(1,`Generando acta ${i+1} de ${A.length}…`,100*(i+1)/A.length);await tick()}}
+dl(new Blob([await D.pdf.save()],{type:'application/pdf'}),`Actas_entrega_${S.ent.num}.pdf`);rec();busy(0,'Listo. La entrega quedó registrada en el historial.');toast('Actas descargadas')}catch(e){fail(e)}}
+async function zipAll(){if(!pre())return;try{const A=act(),F=[];busy(1,'Preparando…',1);for(let i=0;i<A.length;i++){const D=await newDoc();acta(D,A[i]);F.push({name:String(i+1).padStart(2,'0')+' '+fname(A[i].n||'Sede')+'.pdf',data:await D.pdf.save()});busy(1,`Generando acta ${i+1} de ${A.length}…`,95*(i+1)/A.length);await tick()}
+const P=await provPdf();F.push({name:'00 LISTA PROVEEDOR Y PEDIDO.pdf',data:await P.pdf.save()});dl(mkZip(F),`Actas_individuales_entrega_${S.ent.num}.zip`);rec();busy(0,'Listo. La entrega quedó registrada en el historial.');toast('ZIP descargado')}catch(e){fail(e)}}
+async function pv(){if(!pre())return;try{busy(1,'Generando lista…',40);const D=await provPdf();dl(new Blob([await D.pdf.save()],{type:'application/pdf'}),`Lista_proveedor_entrega_${S.ent.num}.pdf`);busy(0,'Lista del proveedor descargada.')}catch(e){fail(e)}}
+async function show(D){const f=$('pvf'),b=new Blob([await D.pdf.save()],{type:'application/pdf'});if(f._u)URL.revokeObjectURL(f._u);f._u=URL.createObjectURL(b);f.src=f._u;f.hidden=false;f.scrollIntoView({behavior:'smooth',block:'start'})}
+async function prev(){if(!pre())return;try{const D=await newDoc();acta(D,S.sedes[+$('pvs').value]);await show(D)}catch(e){fail(e)}}
+async function prevProv(){if(!pre())return;try{await show(await provPdf())}catch(e){fail(e)}}
+function csv(){if(!pre())return;const P=used(),A=act(),q=v=>{v=String(v);return/[;"\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v},kgs=v=>(v/1000).toFixed(2).replace('.',',');
+const rows=[['Sede','Código DANE','Cupos primaria','Cupos secundaria','Total cupos',...P.map(p=>p.n+(p.e==1?' (kg)':' ('+p.u+')'))]];A.forEach(s=>rows.push([s.n,s.dane?`="${s.dane}"`:'',cP(s),cS(s),cT(s),...P.map(p=>{const v=qty(p,s);return p.e==1?kgs(v):v})]));
+const T=tots(A);rows.push(['TOTAL','',T.cp,T.cs,T.ct,...P.map(p=>{const v=A.reduce((a,s)=>a+qty(p,s),0);return p.e==1?kgs(v):v})]);
+dl(new Blob(['\ufeff'+rows.map(r=>r.map(v=>String(v).startsWith('="')?v:q(v)).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}),`Pedido_entrega_${S.ent.num}.csv`);toast('Pedido descargado para Excel')}
+init();
+if(MIGR){save();toast('Se trajeron la entrega y las sedes de la versión anterior. Reparta los cupos de secundaria.')}
+</script></body></html>
